@@ -11,16 +11,16 @@
 
 statusbar *statusbar_new_with_format(const char *label,const char *format)
 {
-	statusbar *new = malloc(sizeof(statusbar));
-	new->label = label;
-	new->start_time = time(0);
-	new->format_length = strlen(format);
-	new->format = malloc(sizeof(char)*(new->format_length+1));
-	strcpy(new->format,format);
-	new->format_index = 0;
-	new->last_printed = 0;
+	statusbar *obj = (statusbar *)malloc(sizeof(statusbar));
+	obj->label = label;
+	obj->start_time = time(0);
+	obj->format_length = strlen(format);
+	obj->format = (char *)malloc(sizeof(char)*(obj->format_length+1));
+	strcpy(obj->format,format);
+	obj->format_index = 0;
+	obj->last_printed = 0;
 	
-	return new;
+	return obj;
 }
 
 statusbar *statusbar_new(const char *label)

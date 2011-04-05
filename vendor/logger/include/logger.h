@@ -38,6 +38,7 @@ public:
     LOG_HTEMPLATE_2(double,double)
     LOG_HTEMPLATE_3(int,int,int)
     LOG_HTEMPLATE_3(double,double,double)
+    LOG_HTEMPLATE_3(const char *, const char *, int);
 
     static void die(const char *system, const char *message);
     static void error(const char *system, const char *message);

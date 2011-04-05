@@ -30,7 +30,7 @@ bool Graph::loadFromPairs(const std::string filename)
 	while (fin.good())
 	{
 		std::getline(fin, line);
-		unsigned int tabPosition = line.find("\t");
+		size_t tabPosition = line.find("\t");
 		if (tabPosition != std::string::npos) {
 			std::string left = line.substr(0,tabPosition);
 			std::string right = line.substr(tabPosition+1,std::string::npos);
@@ -46,11 +46,28 @@ bool Graph::loadFromPairs(const std::string filename)
 			
 			Edge *edge = new Edge(leftNode, rightNode);
 			this->edges.insert(std::pair<Key,Edge *>(Key(left,right), edge));
+			this->edges.insert(std::pair<Key,Edge *>(Key(right,left), edge));
 		}
 	}
 	fin.close();
 	
 	return true;
+}
+
+unsigned int Graph::linksBetween(std::set<Node> a, std::set<Node> b)
+{
+    unsigned int linkCount = 0;
+
+    for (std::set<Node>::iterator aIter=a.begin(); aIter != a.end(); aIter++) {
+        for (std::set<Node>::iterator bIter=b.begin(); bIter != b.end(); bIter++) {
+            Edge *candidate = edges[Key(*aIter,*bIter)];
+            if (candidate != NULL) {
+                linkCount++;
+            }
+        }
+    }
+    
+    return linkCount;
 }
 
 unsigned int Graph::degree(Node node)

@@ -4,20 +4,23 @@
 #include <iostream>
 
 // Include additional test classes here
-#include "testGraph.cpp"
+#include "test_graph.cpp"
+#include "test_dendrogram.cpp"
 
 int main(void)
 {
 	std::set<Test *> tests;
 	
 	tests.insert( new GraphTest() );
+    tests.insert( new DendrogramTest() );
 	
 	std::set<Test *>::iterator iter;
 	int passed = 0;
 	for(iter = tests.begin(); iter != tests.end(); iter++)
 	{
+		std::cout << (*iter)->getName();
 		bool result = (*iter)->run();
-		std::cout << (*iter)->getName() << "..." << (result ? "OK" : "FAILED") << std::endl;
+        std::cout << (result ? " OK" : " FAILED") << std::endl;
 		
 		if (!result) {
 			passed = 1;
@@ -43,9 +46,12 @@ Test::Test()
 void Test::testcase(bool pass, const char *failMessage)
 {
 	if (!pass) {
+        std::cout << std::endl;
 		Log::message(this->getName(),failMessage,Log::WARN);
 		this->passed = false;
-	}
+	} else {
+        std::cout << ".";
+    }
 	
 	numberOfTests++;
 }

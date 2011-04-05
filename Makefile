@@ -1,7 +1,7 @@
 # Makefile for lda-c and assorted tools (int->int hash, string->int hash, sparsecount, etc.)
 
 CC = g++
-OPTIMIZATION_FLAGS = -O3 
+OPTIMIZATION_FLAGS = -O3
 DEBUG_FLAGS = 
 
 UNAME := $(shell uname)
@@ -18,17 +18,29 @@ EXECUTABLES = tests
 LIB := ${wildcard lib/*.cpp}
 LIB_OBJ := ${foreach src,${LIB},${subst .cpp,.o, ${lastword ${subst /, ,${src}}}}}
 
-test: test.o ${LIB_OBJ} logger.o
-	$(CC) $(CFLAGS) test.o $(LIB_OBJ) logger.o -o tests && ./tests
+VENDOR := ${wildcard vendor/lib/*.cpp}
+VENDOR_OBJ := ${foreach src,${VENDOR},${subst .cpp,.o, ${lastword ${subst /, ,${src}}}}}
+
+DEMO := ${wildcard demo/*.cpp}
+DEMO_OBJ := ${foreach src,${DEMO},${subst .cpp,.o, ${lastword ${subst /, ,${src}}}}}
+DEMO_BIN := ${foreach src,${DEMO},${subst .cpp,, ${lastword ${subst /, ,${src}}}}}
+
+EXECUTABLES := ${EXECUTABLES} ${DEMO_BIN}
+
+test: test.o ${LIB_OBJ} ${VENDOR_OBJ}
+	$(CC) $(CFLAGS) test.o $(LIB_OBJ) ${VENDOR_OBJ} logger.o -o tests && ./tests; rm test.o
 
 test.o: test/test.cpp test/test.h
 	$(CC) -c $(CFLAGS) test/test.cpp
 
-testGraph.o: test/testGraph.* lib/graph.*
-	$(CC) -c $(CFLAGS) test/testGraph.cpp
+test_graph.o: test/test_graph.* lib/graph.*
+	$(CC) -c $(CFLAGS) test/test_graph.cpp
 
 progressbar.o: vendor/lib/progressbar.cpp vendor/include/progressbar.h
 	$(CC) -c $(CFLAGS) vendor/lib/progressbar.cpp
+
+statusbar.o: vendor/lib/statusbar.cpp vendor/include/statusbar.h
+	$(CC) -c $(CFLAGS) vendor/lib/statusbar.cpp
 
 logger.o: vendor/lib/logger.cpp vendor/include/logger.h
 	$(CC) -c $(CFLAGS) vendor/lib/logger.cpp
@@ -36,11 +48,26 @@ logger.o: vendor/lib/logger.cpp vendor/include/logger.h
 graph.o: lib/graph.h lib/graph.cpp
 	$(CC) -c $(CFLAGS) lib/graph.cpp
 
-.PHONY: clean doc all debug
+dendrogram.o: lib/dendrogram.h lib/dendrogram.cpp graph.o dendrogram_node.o
+	$(CC) -c $(CFLAGS) lib/dendrogram.cpp
+
+dendrogram_node.o: lib/dendrogram_node.h lib/dendrogram_node.cpp graph.o
+	$(CC) -c $(CFLAGS) lib/dendrogram_node.cpp
+
+demo: figure_4 ${VENDOR_OBJ}
+
+figure_4: $(LIB_OBJ) ${VENDOR_OBJ} figure_4 demo/figure_4.cpp
+	$(CC) $(CFLAGS) demo/figure_4.cpp ${LIB_OBJ} ${VENDOR_OBJ} -o figure_4
+
+.PHONY: clean doc all debug demo
 
 debug:
-	echo $(LIB_OBJ)
-	echo $(TEST_OBJ)
+	@echo "LIB_OBJ: " $(LIB_OBJ)
+	@echo "TEST_OBJ: " $(TEST_OBJ)
+	@echo "DEMO_OBJ: " $(DEMO_OBJ)
+	@echo "DEMO_BIN: " $(DEMO_BIN)
+	@echo "VENDOR: " ${VENDOR}
+	@echo "VENDOR_OBJ: " ${VENDOR_OBJ}
 
 # Clean target
 clean:

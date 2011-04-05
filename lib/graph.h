@@ -33,6 +33,7 @@ public:
 	Graph(const std::string filename);
 	bool isValid();
 	unsigned int degree(Node node);
+    unsigned int linksBetween(std::set<Node> a, std::set<Node> b);
 };
 
 #endif
