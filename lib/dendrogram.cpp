@@ -3,12 +3,17 @@
 #include <set>
 #include <cmath>
 #include <map>
+#include <iostream>
 
 Dendrogram::Dendrogram(Dendrogram *other)
 {
     this->graph = other->graph;
     
     std::map<DendrogramNode *,DendrogramNode *> cloneMap;
+    
+    for (std::set<LeafNode *>::iterator iter=other->leaves.begin(); iter != other->leaves.end(); iter++) {
+        this->leaves.insert(*iter);
+    }
     
     for (std::set<InternalNode *>::iterator iter=other->nodes.begin(); iter != other->nodes.end(); iter++) {
         InternalNode *clone = new InternalNode(*iter);
@@ -36,6 +41,7 @@ Dendrogram::Dendrogram(Graph *graph) : graph(graph)
     for (std::set<Node>::iterator iter = graph->nodes.begin(); iter != graph->nodes.end(); iter++) {
         LeafNode *leaf = new LeafNode(*iter);
         nodesBuild.insert(leaf);
+        leaves.insert(leaf);
     }
     
     // Incrementally pair up nodes in the builder set, until there's only one left (the root).
@@ -96,6 +102,40 @@ double Dendrogram::sample()
     }
     
     return newLikelihood;
+}
+
+void Dendrogram::addLeaf(Node leaf, Node hint)
+{   
+    // Find the candidate's parent
+    InternalNode *parent = findParent(hint,(InternalNode *)root);
+    LeafNode *leafNode = new LeafNode(leaf);
+    
+    // Add in the new node
+    InternalNode *subparent;
+    if (parent->getLeft()->value == hint) {
+        subparent = new InternalNode(parent->getLeft(),leafNode);
+        parent->setLeft(subparent);
+    } else {
+        subparent = new InternalNode(parent->getRight(),leafNode);
+        parent->setRight(subparent);
+    }
+    
+    leaves.insert(leafNode);
+    nodes.insert(subparent);
+}
+
+InternalNode *Dendrogram::findParent(Node node, InternalNode *subtree)
+{
+    if (subtree->getLeft()->value == node || subtree->getRight()->value == node) {
+        return subtree;
+    }
+    
+    std::set<Node>leftChildren = subtree->getLeft()->getChildren();
+    if (leftChildren.find(node) != leftChildren.end()) {
+        return findParent(node,(InternalNode *)subtree->getLeft());
+    } else {
+        return findParent(node,(InternalNode *)subtree->getRight());
+    }
 }
 
 double Dendrogram::likelihood()

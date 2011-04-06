@@ -23,17 +23,20 @@ class Graph
 {
 protected:
 	bool loadFromPairs(std::string filename);
+	bool loadFromWeights(std::string filename);
 	bool valid;
 	
 public:
 	std::set<Node>nodes;
 	std::map<Key, Edge *>edges;
-	std::map<Node, unsigned int>degrees;
 
 	Graph(const std::string filename);
 	bool isValid();
-	unsigned int degree(Node node);
-    unsigned int linksBetween(std::set<Node> a, std::set<Node> b);
+    double linksBetween(std::set<Node> a, std::set<Node> b);
+    void setWeight(Node a, Node b, double weight);
+    
+    void addNode(Node node);
+    void addEdge(Node a, Node b, double weight=1.0);
 };
 
 #endif

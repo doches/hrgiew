@@ -46,7 +46,7 @@ Test::Test()
 void Test::testcase(bool pass, const char *failMessage)
 {
 	if (!pass) {
-        std::cout << std::endl;
+        std::cout << std::endl << "in \""<<contextLabel << "\":\n\t";
 		Log::message(this->getName(),failMessage,Log::WARN);
 		this->passed = false;
 	} else {
@@ -54,6 +54,11 @@ void Test::testcase(bool pass, const char *failMessage)
     }
 	
 	numberOfTests++;
+}
+
+void Test::context(std::string name)
+{
+    contextLabel = name;
 }
 
 bool Test::didPass()

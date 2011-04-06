@@ -2,19 +2,36 @@
 #include "graph.h"
 #include "progressbar.h"
 #include <cmath>
+#include <time.h>
+#include <stdlib.h>
 
 int main(int argc, const char **argv)
 {
     Graph *graph = new Graph(argv[1]);
     Dendrogram *dendro = new Dendrogram(graph);
+    Dendrogram *bestDendrogram = NULL;
+    double bestLikelihood = 1.0f;
     
     int iterations = atoi(argv[2]);
+    
+    srand(time(0));
     
     progressbar *progress = progressbar_new("Sampling",iterations);
     for (int i=0; i<iterations; i++) {
         dendro->sample();
-        printf("Iteration %d = %f\n",i,log10(dendro->likelihood()));
+        double logLikelihood = log10(dendro->likelihood());
+        printf("Iteration %d = %f\n",i,logLikelihood);
         progressbar_inc(progress);
+        
+        if (bestDendrogram == NULL || logLikelihood > bestLikelihood) {
+            bestLikelihood = logLikelihood;
+            if (bestDendrogram != NULL) {
+                delete bestDendrogram;
+            }
+            bestDendrogram = new Dendrogram(dendro);
+            printf("New best: %f\n",bestLikelihood);
+        }
     }
     progressbar_finish(progress);
+    bestDendrogram->print();
 }

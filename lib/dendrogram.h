@@ -11,7 +11,9 @@ protected:
 	DendrogramNode *root;
     Graph *graph;
     std::set<InternalNode *>nodes;
+    std::set<LeafNode *>leaves;
     void updateProbabilities();
+    InternalNode *findParent(Node node, InternalNode *subtree);
 public:
 	Dendrogram(Graph *graph);
     Dendrogram(Dendrogram *dendrogram);
@@ -19,6 +21,7 @@ public:
     double likelihood();
     DendrogramNode *getRoot();
     void print();
+    void addLeaf(Node leaf, Node hint="");
 };
 
 #endif

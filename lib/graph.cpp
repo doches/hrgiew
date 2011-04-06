@@ -2,6 +2,7 @@
 #include "logger.h"
 #include <fstream>
 #include <iostream>
+#include <stdio.h>
 
 Edge::Edge(Node a, Node b, double weight)
 {
@@ -15,7 +16,35 @@ Graph::Graph(std::string filename)
 	this->valid = false;
 	if (filename.rfind(".pairs")!=std::string::npos) {
 		this->valid = loadFromPairs(filename);
-	}
+	} else if (filename.rfind(".weights")!=std::string::npos) {
+		this->valid = loadFromWeights(filename);
+    }
+}
+
+bool Graph::loadFromWeights(const std::string filename)
+{
+    FILE *fin = fopen(filename.c_str(),"r");
+    char line[80];
+    if (fin) {
+        while (!feof(fin)) {
+            fgets(line,80,fin);
+            
+            if (strchr(line,'\t')!=NULL) {
+                std::string left = std::string(strtok(line,"\t"));
+                std::string right = std::string(strtok(NULL,"\t"));
+                double weight = atof(strtok(NULL,"\t\n"));
+                
+                addNode(left);
+                addNode(right);
+                addEdge(left,right,weight);
+            }
+        }
+        fclose(fin);
+    } else {
+        return false;
+    }
+    
+    return true;
 }
 
 bool Graph::loadFromPairs(const std::string filename)
@@ -34,19 +63,10 @@ bool Graph::loadFromPairs(const std::string filename)
 		if (tabPosition != std::string::npos) {
 			std::string left = line.substr(0,tabPosition);
 			std::string right = line.substr(tabPosition+1,std::string::npos);
-			
-			Node leftNode = Node(left);
-			Node rightNode = Node(right);
-			
-			this->nodes.insert(leftNode);
-			this->nodes.insert(rightNode);
-			
-			this->degrees[leftNode]++;
-			this->degrees[rightNode]++;
-			
-			Edge *edge = new Edge(leftNode, rightNode);
-			this->edges.insert(std::pair<Key,Edge *>(Key(left,right), edge));
-			this->edges.insert(std::pair<Key,Edge *>(Key(right,left), edge));
+            
+            addNode(left);
+            addNode(right);
+            addEdge(left,right);
 		}
 	}
 	fin.close();
@@ -54,15 +74,15 @@ bool Graph::loadFromPairs(const std::string filename)
 	return true;
 }
 
-unsigned int Graph::linksBetween(std::set<Node> a, std::set<Node> b)
+double Graph::linksBetween(std::set<Node> a, std::set<Node> b)
 {
-    unsigned int linkCount = 0;
+    double linkCount = 0;
 
     for (std::set<Node>::iterator aIter=a.begin(); aIter != a.end(); aIter++) {
         for (std::set<Node>::iterator bIter=b.begin(); bIter != b.end(); bIter++) {
             Edge *candidate = edges[Key(*aIter,*bIter)];
             if (candidate != NULL) {
-                linkCount++;
+                linkCount += candidate->weight;
             }
         }
     }
@@ -70,12 +90,30 @@ unsigned int Graph::linksBetween(std::set<Node> a, std::set<Node> b)
     return linkCount;
 }
 
-unsigned int Graph::degree(Node node)
-{
-	return this->degrees[node];
-}
-
 bool Graph::isValid()
 {
 	return this->valid;
+}
+
+void Graph::addNode(Node node)
+{
+    Node newNode = Node(node);
+    this->nodes.insert(newNode);
+}
+
+void Graph::addEdge(Node left, Node right, double weight)
+{
+    Edge *edge = new Edge(left,right,weight);
+    this->edges.insert(std::pair<Key,Edge *>(Key(left,right), edge));
+    this->edges.insert(std::pair<Key,Edge *>(Key(right,left), edge));
+}
+
+void Graph::setWeight(Node left, Node right, double weight)
+{
+    Edge *edge = this->edges[Key(left,right)];
+    if (edge == NULL) {
+        edge = this->edges[Key(right,left)];
+    }
+    
+    edge->weight = weight;
 }
