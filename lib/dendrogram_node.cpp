@@ -7,6 +7,14 @@ DendrogramNode::DendrogramNode(NodeType type, Node value) : value(value), type(t
 
 InternalNode::InternalNode(DendrogramNode *left, DendrogramNode *right) : DendrogramNode(NODE_INTERNAL), left(left), right(right), lastPermutation(PERMUTE_NONE), probability(0.0f) { }
 
+InternalNode::InternalNode(InternalNode *copy)
+{
+    this->lastPermutation = PERMUTE_NONE;
+    this->probability = copy->probability;
+    this->left = copy->left;
+    this->right = copy->right;
+}
+
 Permutation InternalNode::chooseRandomPermutation()
 {
     return (Permutation)(rand()%PERMUTE_NONE);

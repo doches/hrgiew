@@ -14,6 +14,7 @@ protected:
     void updateProbabilities();
 public:
 	Dendrogram(Graph *graph);
+    Dendrogram(Dendrogram *dendrogram);
     double sample();
     double likelihood();
     DendrogramNode *getRoot();

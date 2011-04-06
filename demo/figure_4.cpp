@@ -13,10 +13,7 @@ int main(int argc, const char **argv)
     progressbar *progress = progressbar_new("Sampling",iterations);
     for (int i=0; i<iterations; i++) {
         dendro->sample();
-        if (i%100 == 0) {
-            dendro->print();
-            printf("Iteration %d = %f\n",i,log10(dendro->likelihood()));
-        }
+        printf("Iteration %d = %f\n",i,log10(dendro->likelihood()));
         progressbar_inc(progress);
     }
     progressbar_finish(progress);

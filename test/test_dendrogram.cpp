@@ -22,15 +22,23 @@ bool DendrogramTest::run()
     testcase(dendro->getRoot() != NULL, "Dendrogram has NULL root");
     testcase(((InternalNode *)(dendro->getRoot()))->getLeft() != NULL, "Dendrogram root has NULL left child");
     testcase(((InternalNode *)(dendro->getRoot()))->getRight() != NULL, "Dendrogram root has NULL right child");
+//    
+//    for (int i=0; i<100; i++) {
+//        dendro->sample();
+//    }
+//    printf("dendro 1: %f",dendro->likelihood());
+//    dendro->print();
+//    Dendrogram *hold = new Dendrogram(dendro);
+//    printf("hold 1: %f",dendro->likelihood());
+//    hold->print();
+//    for (int i=0; i<100; i++) {
+//        dendro->sample();
+//    }
+//    printf("dendro 2: %f",dendro->likelihood());
+//    dendro->print();
+//    printf("hold 2: %f",dendro->likelihood());
+//    hold->print();
     
-    printf("%f",dendro->likelihood());
-    dendro->print();
-    
-    for (int i=0; i<100; i++) {
-        printf("%f\n",dendro->sample());
-    }
-    printf("%f",dendro->likelihood());
-    dendro->print();
     
 	delete dendro;
 	delete graph;

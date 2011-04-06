@@ -2,6 +2,32 @@
 #include "logger.h"
 #include <set>
 #include <cmath>
+#include <map>
+
+Dendrogram::Dendrogram(Dendrogram *other)
+{
+    this->graph = other->graph;
+    
+    std::map<DendrogramNode *,DendrogramNode *> cloneMap;
+    
+    for (std::set<InternalNode *>::iterator iter=other->nodes.begin(); iter != other->nodes.end(); iter++) {
+        InternalNode *clone = new InternalNode(*iter);
+        cloneMap.insert( std::pair<InternalNode *,InternalNode *>(*iter,clone) );
+        this->nodes.insert(clone);
+    }
+    
+    this->root = cloneMap[other->root];
+    
+    for (std::set<InternalNode *>::iterator iter=nodes.begin(); iter != nodes.end(); iter++) {
+        InternalNode *node = *iter;
+        if (node->getLeft()->type == NODE_INTERNAL) {
+            node->setLeft(cloneMap[node->getLeft()]);
+        }
+        if (node->getRight()->type == NODE_INTERNAL) {
+            node->setRight(cloneMap[node->getRight()]);
+        }
+    }
+}
 
 Dendrogram::Dendrogram(Graph *graph) : graph(graph)
 {

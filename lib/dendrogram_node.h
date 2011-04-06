@@ -26,6 +26,7 @@ protected:
     static Permutation chooseRandomPermutation();
 public:
 	InternalNode(DendrogramNode *left, DendrogramNode *right);
+    InternalNode(InternalNode *other);
     
     void permute(Permutation permutation=PERMUTE_NONE);
     void revert();

@@ -1,8 +1,8 @@
 # Makefile for lda-c and assorted tools (int->int hash, string->int hash, sparsecount, etc.)
 
 CC = g++
-OPTIMIZATION_FLAGS = -O3
-DEBUG_FLAGS = 
+OPTIMIZATION_FLAGS = 
+DEBUG_FLAGS = -g
 
 UNAME := $(shell uname)
 ifeq ($(UNAME),Linux)
@@ -28,7 +28,7 @@ DEMO_BIN := ${foreach src,${DEMO},${subst .cpp,, ${lastword ${subst /, ,${src}}}
 EXECUTABLES := ${EXECUTABLES} ${DEMO_BIN}
 
 test: test.o ${LIB_OBJ} ${VENDOR_OBJ}
-	$(CC) $(CFLAGS) test.o $(LIB_OBJ) ${VENDOR_OBJ} logger.o -o tests && ./tests; rm test.o
+	$(CC) $(CFLAGS) test.o $(LIB_OBJ) ${VENDOR_OBJ} -o tests && ./tests; rm test.o
 
 test.o: test/test.cpp test/test.h
 	$(CC) -c $(CFLAGS) test/test.cpp
