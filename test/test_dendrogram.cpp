@@ -45,9 +45,6 @@ bool DendrogramTest::run()
     nodes_z.insert("Z");
     testcase(graph->linksBetween(nodes_ab,nodes_z) == 0.9, "Incorrect link weight between [A,B] , [Z]");
     dendro->addLeaf("Z","A");
-    dendro->print();
-    dendro->sample();
-    dendro->print();
     testcase(graph->linksBetween(nodes_ab,nodes_z) == 0.9, "Incorrect link weight between [A,B] , [Z]");
 	
 	return this->didPass();

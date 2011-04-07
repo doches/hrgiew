@@ -1,3 +1,6 @@
+#ifndef __DENDROGRAM_NODE_H__
+#define __DENDROGRAM_NODE_H__
+
 #include "graph.h"
 
 typedef enum _Permutation_t { PERMUTE_LL, PERMUTE_LR, PERMUTE_RL, PERMUTE_RR, PERMUTE_NONE } Permutation;
@@ -47,3 +50,5 @@ public:
     std::set<Node> getChildren();
     void print(int level=0);
 };
+
+#endif

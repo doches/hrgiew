@@ -6,6 +6,7 @@
 // Include additional test classes here
 #include "test_graph.cpp"
 #include "test_dendrogram.cpp"
+#include "test_consensus.cpp"
 
 int main(void)
 {
@@ -13,6 +14,7 @@ int main(void)
 	
 	tests.insert( new GraphTest() );
     tests.insert( new DendrogramTest() );
+    tests.insert( new ConsensusTest() );
 	
 	std::set<Test *>::iterator iter;
 	int passed = 0;

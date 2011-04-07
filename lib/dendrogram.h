@@ -10,11 +10,12 @@ class Dendrogram
 protected:
 	DendrogramNode *root;
     Graph *graph;
-    std::set<InternalNode *>nodes;
     std::set<LeafNode *>leaves;
     void updateProbabilities();
     InternalNode *findParent(Node node, InternalNode *subtree);
 public:
+    std::set<InternalNode *>nodes;
+    
 	Dendrogram(Graph *graph);
     Dendrogram(Dendrogram *dendrogram);
     double sample();

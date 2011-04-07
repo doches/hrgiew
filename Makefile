@@ -39,6 +39,9 @@ test_graph.o: test/test_graph.* lib/graph.*
 progressbar.o: vendor/lib/progressbar.cpp vendor/include/progressbar.h
 	$(CC) -c $(CFLAGS) vendor/lib/progressbar.cpp
 
+consensus.o: lib/consensus.h lib/consensus.cpp
+	$(CC) -c $(CFLAGS) lib/consensus.cpp
+
 statusbar.o: vendor/lib/statusbar.cpp vendor/include/statusbar.h
 	$(CC) -c $(CFLAGS) vendor/lib/statusbar.cpp
 
@@ -54,10 +57,13 @@ dendrogram.o: lib/dendrogram.h lib/dendrogram.cpp graph.o dendrogram_node.o
 dendrogram_node.o: lib/dendrogram_node.h lib/dendrogram_node.cpp graph.o
 	$(CC) -c $(CFLAGS) lib/dendrogram_node.cpp
 
-demo: figure_4 ${VENDOR_OBJ}
+demo: figure_4 figure_5 ${VENDOR_OBJ}
 
-figure_4: $(LIB_OBJ) ${VENDOR_OBJ} figure_4 demo/figure_4.cpp
+figure_4: $(LIB_OBJ) ${VENDOR_OBJ} demo/figure_4.cpp
 	$(CC) $(CFLAGS) demo/figure_4.cpp ${LIB_OBJ} ${VENDOR_OBJ} -o figure_4
+
+figure_5: $(LIB_OBJ) ${VENDOR_OBJ} demo/figure_5.cpp
+	$(CC) $(CFLAGS) demo/figure_5.cpp ${LIB_OBJ} ${VENDOR_OBJ} -o figure_5
 
 .PHONY: clean doc all debug demo
 
