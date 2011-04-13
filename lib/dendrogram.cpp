@@ -4,6 +4,7 @@
 #include <cmath>
 #include <map>
 #include <iostream>
+#include <stdlib.h>
 
 Dendrogram::Dendrogram(Dendrogram *other)
 {
