@@ -14,7 +14,7 @@ class DendrogramNode
 public:
     Node value;
     NodeType type;
-    DendrogramNode(NodeType type=NODE_NONE, Node value="");
+    DendrogramNode(NodeType type=NODE_NONE, Node value=0);
     virtual std::set<Node> getChildren() = 0;
     virtual void print(int level=0) = 0;
 };

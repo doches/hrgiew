@@ -8,6 +8,7 @@
 
 #include "consensus.h"
 #include <map>
+#include <sstream>
 #include <iostream>
 
 ConsensusNode::ConsensusNode(std::set<ConsensusNode *>children)
@@ -36,7 +37,7 @@ std::string ConsensusNode::toString()
     return str;
 }
 
-ConsensusLeaf::ConsensusLeaf(std::string value) : ConsensusNode()
+ConsensusLeaf::ConsensusLeaf(Node value) : ConsensusNode()
 {
     this->value = value;
     this->type = NODE_LEAF;
@@ -44,7 +45,10 @@ ConsensusLeaf::ConsensusLeaf(std::string value) : ConsensusNode()
 
 std::string ConsensusLeaf::toString()
 {
-    return "<"+this->value+">";
+    std::ostringstream oss;
+    oss << this->value;
+    
+    return "<"+oss.str()+">";
 }
 
 bool clusterCompare(Cluster a, Cluster b) {
@@ -54,7 +58,7 @@ bool clusterCompare(Cluster a, Cluster b) {
 Consensus::Consensus(DendrogramSet dendrograms, Graph *graph)
 {
     std::map<Cluster,double,bool(*)(Cluster,Cluster)> clusterWeights(&clusterCompare);
-    double totalWeight;
+    double totalWeight = 0.0f;
     
     // Compute the weight for each observed cluster
     for (DendrogramSet::iterator iter = dendrograms.begin(); iter != dendrograms.end(); iter++) {
@@ -90,7 +94,7 @@ Consensus::Consensus(DendrogramSet dendrograms, Graph *graph)
     }
     
     // Keep a running map of leaf strings -> highest parent
-    std::map<std::string,ConsensusNode *>foundIn;
+    std::map<Node,ConsensusNode *>foundIn;
     for (std::set<Node>::iterator iter= graph->nodes.begin(); iter != graph->nodes.end(); iter++) {
         foundIn[*iter] = new ConsensusLeaf(*iter);
     }

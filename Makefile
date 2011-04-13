@@ -2,7 +2,7 @@
 
 CC = g++
 OPTIMIZATION_FLAGS = 
-DEBUG_FLAGS = -g
+DEBUG_FLAGS = -g -pg
 
 UNAME := $(shell uname)
 ifeq ($(UNAME),Linux)
@@ -26,6 +26,8 @@ DEMO_OBJ := ${foreach src,${DEMO},${subst .cpp,.o, ${lastword ${subst /, ,${src}
 DEMO_BIN := ${foreach src,${DEMO},${subst .cpp,, ${lastword ${subst /, ,${src}}}}}
 
 EXECUTABLES := ${EXECUTABLES} ${DEMO_BIN}
+
+all: ${DEMO_BIN} ${LIB_OBJ}
 
 test: test.o ${LIB_OBJ} ${VENDOR_OBJ}
 	$(CC) $(CFLAGS) test.o $(LIB_OBJ) ${VENDOR_OBJ} -o tests && ./tests; rm test.o
@@ -65,7 +67,13 @@ figure_4: $(LIB_OBJ) ${VENDOR_OBJ} demo/figure_4.cpp
 figure_5: $(LIB_OBJ) ${VENDOR_OBJ} demo/figure_5.cpp
 	$(CC) $(CFLAGS) demo/figure_5.cpp ${LIB_OBJ} ${VENDOR_OBJ} -o figure_5
 
-.PHONY: clean doc all debug demo
+learner: corpus.o $(LIB_OBJ) $(VENDOR_OBJ) demo/learner.cpp
+	$(CC) $(CFLAGS) $(LIB_OBJ) $(VENDOR_OBJ) demo/learner.cpp -o learner
+
+corpus.o: lib/corpus.h lib/corpus.cpp
+	$(CC) -c $(CFLAGS) lib/corpus.cpp
+
+.PHONY: clean all debug demo
 
 debug:
 	@echo "LIB_OBJ: " $(LIB_OBJ)
@@ -82,10 +90,3 @@ clean:
 	rm -f $(EXECUTABLES)
 	rm -f **/*~
 	rm -f *~
-
-# Doc target
-doc: lib/*.h tools/*.h
-	rm -rf doc/
-	crud
-
-all: $(EXECUTABLES) doc

@@ -22,7 +22,7 @@ public:
     double likelihood();
     DendrogramNode *getRoot();
     void print();
-    void addLeaf(Node leaf, Node hint="");
+    void addLeaf(Node leaf, Node hint=0);
 };
 
 #endif

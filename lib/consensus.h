@@ -29,14 +29,14 @@ public:
 class ConsensusLeaf : public ConsensusNode
 {
 public:
-    std::string value;
+    Node value;
     
-    ConsensusLeaf(std::string value);
+    ConsensusLeaf(Node value);
     std::string toString();
 };
 
 typedef std::set<Dendrogram *> DendrogramSet;
-typedef std::set<std::string> Cluster;
+typedef std::set<Node> Cluster;
 
 class Consensus
 {

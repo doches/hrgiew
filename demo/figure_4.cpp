@@ -19,7 +19,7 @@ int main(int argc, const char **argv)
     progressbar *progress = progressbar_new("Sampling",iterations);
     for (int i=0; i<iterations; i++) {
         dendro->sample();
-        double logLikelihood = log10(dendro->likelihood());
+        double logLikelihood = dendro->likelihood();
         printf("Iteration %d = %f\n",i,logLikelihood);
         progressbar_inc(progress);
         

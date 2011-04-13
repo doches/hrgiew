@@ -35,6 +35,7 @@ public:
     LOG_HTEMPLATE_1(char)
     LOG_HTEMPLATE_2(int,int)
     LOG_HTEMPLATE_2(const char *, const char *)
+    LOG_HTEMPLATE_2(const char *, int)
     LOG_HTEMPLATE_2(double,double)
     LOG_HTEMPLATE_3(int,int,int)
     LOG_HTEMPLATE_3(double,double,double)

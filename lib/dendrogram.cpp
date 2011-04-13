@@ -76,6 +76,9 @@ void Dendrogram::print()
 
 double Dendrogram::sample()
 {
+    if (root == NULL) {
+        return 0.0f;
+    }
     InternalNode *node = NULL;
     int randomIndex = rand()%nodes.size();
     for (std::set<InternalNode *>::iterator iter=nodes.begin(); iter != nodes.end(); iter++) {
@@ -105,10 +108,32 @@ double Dendrogram::sample()
 }
 
 void Dendrogram::addLeaf(Node leaf, Node hint)
-{   
+{
+    LeafNode *leafNode = new LeafNode(leaf);
+    // If we don't have a root node yet, decide if we need to create one.
+    if (root == NULL) {
+        // Create the new leaf and store it anyway
+        leaves.insert(leafNode);
+        // Do we have at least two leaves?
+        if (leaves.size() == 2) {
+            // Create a root node with them as children
+            LeafNode *a=NULL,*b=NULL;
+            for (std::set<LeafNode *>::iterator leafIter = leaves.begin(); leafIter != leaves.end(); leafIter++) {
+                if (a==NULL) {
+                    a = *leafIter;
+                } else {
+                    b = *leafIter;
+                }
+            }
+            root = new InternalNode(a,b);
+            nodes.insert((InternalNode *)root);
+        }
+        
+        return;
+    }
+    
     // Find the candidate's parent
     InternalNode *parent = findParent(hint,(InternalNode *)root);
-    LeafNode *leafNode = new LeafNode(leaf);
     
     // Add in the new node
     InternalNode *subparent;
@@ -142,7 +167,7 @@ double Dendrogram::likelihood()
 {
     this->updateProbabilities();
     
-    double product = 1.0f;
+    double product = 0.0f;
     for (std::set<InternalNode *>::iterator iter = nodes.begin(); iter != nodes.end(); iter++) {
         InternalNode *node = *iter;
         
@@ -150,7 +175,8 @@ double Dendrogram::likelihood()
         std::set<Node> rightChildren = node->getRight()->getChildren();
         double eNode = (double)(graph->linksBetween(leftChildren,rightChildren));
         
-        product *= pow(node->probability, eNode) * pow(1-node->probability,leftChildren.size()*rightChildren.size() - eNode);
+        double p = pow(node->probability, eNode) * pow(1-node->probability,leftChildren.size()*rightChildren.size() - eNode);
+        product += log(p);
     }
     
     return product;
