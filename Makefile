@@ -2,14 +2,14 @@
 
 CC = g++
 OPTIMIZATION_FLAGS = 
-DEBUG_FLAGS = -g -pg
+DEBUG_FLAGS = -g
 
 UNAME := $(shell uname)
 ifeq ($(UNAME),Linux)
-CFLAGS = -Wall -I lib/ -I vendor/include/ -I tools/ -I test/ -Werror $(DEBUG_FLAGS) $(OPTIMIZATION_FLAGS)
+CFLAGS = -Wall -I lib/ -I vendor/include/ -I tools/ -I test/ $(DEBUG_FLAGS) $(OPTIMIZATION_FLAGS)
 endif
 ifeq ($(UNAME),Darwin)
-CFLAGS = -Wall -I lib/ -I vendor/include/ -I tools/ -I test/ -Werror $(DEBUG_FLAGS) $(OPTIMIZATION_FLAGS)
+CFLAGS = -Wall -I lib/ -I vendor/include/ -I tools/ -I test/ $(DEBUG_FLAGS) $(OPTIMIZATION_FLAGS)
 endif
 
 LFLAGS = -lm -lgsl -lgslcblas $(DEBUG_FLAGS)

@@ -34,6 +34,7 @@ public:
 
 	Graph(const std::string filename);
     Graph();
+    std::string toString();
 	bool isValid();
     double linksBetween(std::set<Node> a, std::set<Node> b);
     void setWeight(Node a, Node b, double weight);

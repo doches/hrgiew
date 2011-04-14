@@ -12,6 +12,7 @@
 
 #include <math.h>
 #include <iostream>
+#include <fstream>
 #include <map>
 using namespace std;
 
@@ -92,7 +93,12 @@ void eachDocument(Word target, Document doc, bool newTarget)
     documentIndex++;
     
     if (documentIndex > 0 && documentIndex % 10 == 0) {
-        cout << documentIndex << " documents processed (dendrogram likelihood: "<<dendrogram->likelihood() <<")"<<endl;
+        cout << documentIndex << " documents processed"<<endl;// (dendrogram likelihood: "<<dendrogram->likelihood() <<")"<<endl;
+        char fname[20];
+        sprintf(fname,"graph.%d.weights",documentIndex);
+        std::ofstream fout(fname);
+        fout << graph->toString();
+        fout.close();
     }
 }
 

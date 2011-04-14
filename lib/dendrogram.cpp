@@ -15,15 +15,15 @@ Dendrogram::Dendrogram(Dendrogram *other)
         this->leaves.insert(*iter);
     }
     
-    for (std::set<InternalNode *>::iterator iter=other->nodes.begin(); iter != other->nodes.end(); iter++) {
+    for (NodeList::iterator iter=other->nodes.begin(); iter != other->nodes.end(); iter++) {
         InternalNode *clone = new InternalNode(*iter);
         cloneMap.insert( std::pair<InternalNode *,InternalNode *>(*iter,clone) );
-        this->nodes.insert(clone);
+        this->nodes.push_back(clone);
     }
     
     this->root = cloneMap[other->root];
     
-    for (std::set<InternalNode *>::iterator iter=nodes.begin(); iter != nodes.end(); iter++) {
+    for (NodeList::iterator iter=nodes.begin(); iter != nodes.end(); iter++) {
         InternalNode *node = *iter;
         if (node->getLeft()->type == NODE_INTERNAL) {
             node->setLeft(cloneMap[node->getLeft()]);
@@ -50,7 +50,7 @@ Dendrogram::Dendrogram(Graph *graph) : graph(graph)
         nodesBuild.erase(parent->getLeft());
         nodesBuild.erase(parent->getRight());
         nodesBuild.insert(parent);
-        nodes.insert(parent);
+        nodes.push_back(parent);
     }
     
     this->root = *(nodesBuild.begin());
@@ -59,7 +59,7 @@ Dendrogram::Dendrogram(Graph *graph) : graph(graph)
 // Update probabilities for each internal node
 void Dendrogram::updateProbabilities()
 { 
-    for (std::set<InternalNode *>::iterator iter = nodes.begin(); iter != nodes.end(); iter++) {
+    for (NodeList::iterator iter = nodes.begin(); iter != nodes.end(); iter++) {
         InternalNode *node = *iter;
         if (node->type == NODE_INTERNAL) {
             std::set<Node> leftChildren = node->getLeft()->getChildren();
@@ -81,7 +81,7 @@ double Dendrogram::sample()
     }
     InternalNode *node = NULL;
     int randomIndex = rand()%nodes.size();
-    for (std::set<InternalNode *>::iterator iter=nodes.begin(); iter != nodes.end(); iter++) {
+    for (NodeList::iterator iter=nodes.begin(); iter != nodes.end(); iter++) {
         randomIndex--;
         
         if (randomIndex < 0) {
@@ -126,7 +126,7 @@ void Dendrogram::addLeaf(Node leaf, Node hint)
                 }
             }
             root = new InternalNode(a,b);
-            nodes.insert((InternalNode *)root);
+            nodes.push_back((InternalNode *)root);
         }
         
         return;
@@ -146,7 +146,7 @@ void Dendrogram::addLeaf(Node leaf, Node hint)
     }
     
     leaves.insert(leafNode);
-    nodes.insert(subparent);
+    nodes.push_back(subparent);
 }
 
 InternalNode *Dendrogram::findParent(Node node, InternalNode *subtree)
@@ -165,10 +165,10 @@ InternalNode *Dendrogram::findParent(Node node, InternalNode *subtree)
 
 double Dendrogram::likelihood()
 {
+    double product = 0.0f;
     this->updateProbabilities();
     
-    double product = 0.0f;
-    for (std::set<InternalNode *>::iterator iter = nodes.begin(); iter != nodes.end(); iter++) {
+    for (NodeList::iterator iter = nodes.begin(); iter != nodes.end(); iter++) {
         InternalNode *node = *iter;
         
         std::set<Node> leftChildren = node->getLeft()->getChildren();

@@ -8,6 +8,17 @@
 #include "test_dendrogram.cpp"
 #include "test_consensus.cpp"
 
+#define TEST_EQUAL_METHOD(_TYPE0_,_TYPE1_) void Test::test_equal(_TYPE0_ correct, _TYPE1_ candidate, const char *failMessage)\
+{\
+    bool result = correct == candidate;\
+    \
+    testcase(result, failMessage);\
+    \
+    if (!result) {\
+        std::cout << "\t"<<correct<<" expected, got "<<candidate<< std::endl;\
+    }\
+}
+
 int main(void)
 {
 	std::set<Test *> tests;
@@ -57,6 +68,8 @@ void Test::testcase(bool pass, const char *failMessage)
 	
 	numberOfTests++;
 }
+
+TEST_EQUAL_METHOD(double,double);
 
 void Test::context(std::string name)
 {

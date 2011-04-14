@@ -10,6 +10,7 @@
 int main(int argc, const char **argv)
 {
     Graph *graph = new Graph(argv[1]);
+    std::cout << graph->toString() << std::endl;
     Dendrogram *dendro = new Dendrogram(graph);
     Dendrogram *bestDendrogram = NULL;
     double bestLikelihood = 1.0f;

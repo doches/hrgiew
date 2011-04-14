@@ -127,7 +127,7 @@ std::set<Cluster> Consensus::getClusters(Dendrogram *dendro)
 {
     std::set<Cluster> clusters;
     
-    for (std::set<InternalNode *>::iterator iter=dendro->nodes.begin(); iter != dendro->nodes.end(); iter++) {
+    for (NodeList::iterator iter=dendro->nodes.begin(); iter != dendro->nodes.end(); iter++) {
         Cluster cluster = (*iter)->getChildren();
         if (cluster.size() > 1) {
             clusters.insert(cluster);

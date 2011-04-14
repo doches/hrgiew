@@ -36,15 +36,15 @@ bool DendrogramTest::run()
     for (int i=0; i<100; i++) {
         dendro->sample();
     }
-    testcase(dendro->likelihood() > 0.0f && dendro->likelihood() < 1.0f, "Invalid likelihood for post-sampled dendrogram");
-    graph->addNode("Z");
-    graph->addEdge("Z","A",0.9);
+    testcase(dendro->likelihood() < 0.0f, "Invalid likelihood for post-sampled dendrogram");
+    graph->addNode(99);
+    graph->addEdge(99,1,0.9);
     std::set<Node> nodes_ab, nodes_z;
-    nodes_ab.insert("A");
-    nodes_ab.insert("B");
-    nodes_z.insert("Z");
+    nodes_ab.insert(1);
+    nodes_ab.insert(2);
+    nodes_z.insert(99);
     testcase(graph->linksBetween(nodes_ab,nodes_z) == 0.9, "Incorrect link weight between [A,B] , [Z]");
-    dendro->addLeaf("Z","A");
+    dendro->addLeaf(99,1);
     testcase(graph->linksBetween(nodes_ab,nodes_z) == 0.9, "Incorrect link weight between [A,B] , [Z]");
 	
 	return this->didPass();

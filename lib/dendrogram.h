@@ -4,6 +4,9 @@
 #include "graph.h"
 #include "dendrogram_node.h"
 #include <set>
+#include <vector>
+
+typedef std::vector<InternalNode *> NodeList;
 
 class Dendrogram
 {
@@ -14,7 +17,7 @@ protected:
     void updateProbabilities();
     InternalNode *findParent(Node node, InternalNode *subtree);
 public:
-    std::set<InternalNode *>nodes;
+    NodeList nodes;
     
 	Dendrogram(Graph *graph);
     Dendrogram(Dendrogram *dendrogram);
