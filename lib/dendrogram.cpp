@@ -119,7 +119,8 @@ bool Dendrogram::sample()
     }
     else {
         double acceptProbability = (rand()%10000)/10000.0; // TODO Be more random!
-        if (acceptProbability < exp(oldLikelihood-newLikelihood)) {
+        double doAccept = exp(newLikelihood-oldLikelihood);
+        if (acceptProbability > doAccept) {
             node->revert();
             newLikelihood = oldLikelihood;
         }
