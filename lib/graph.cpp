@@ -125,18 +125,19 @@ void Graph::addEdge(Node left, Node right, double weight)
     
     Key lr = Key(left,right);
     Key rl = Key(right,left);
-    if (this->edges.find(lr) != this->edges.end()) {
-        delete this->edges[lr];
-    }
-    if (this->edges.find(rl) != this->edges.end()) {
-        delete this->edges[rl];
+    if (this->edges.find(lr) != this->edges.end() && this->edges[lr] != NULL) {
+        this->edges[lr]->weight = weight;
+    } else {
+        Edge *lrEdge = new Edge(left,right,weight);
+        this->edges.insert(std::pair<Key,Edge *>(lr,lrEdge));
     }
     
-    Edge *lrEdge = new Edge(left,right,weight);
-    Edge *rlEdge = new Edge(right,left,weight);
-    
-    this->edges.insert(std::pair<Key,Edge *>(lr,lrEdge));
-    this->edges.insert(std::pair<Key,Edge *>(rl,rlEdge));
+    if (this->edges.find(rl) != this->edges.end() && this->edges[rl] != NULL) {
+        this->edges[rl]->weight = weight;
+    } else {    
+        Edge *rlEdge = new Edge(right,left,weight);
+        this->edges.insert(std::pair<Key,Edge *>(rl,rlEdge));
+    }
 }
 
 void Graph::setWeight(Node left, Node right, double weight)

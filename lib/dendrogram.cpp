@@ -11,17 +11,13 @@ Dendrogram::Dendrogram(Dendrogram *other)
     
     std::map<DendrogramNode *,DendrogramNode *> cloneMap;
     
-    for (std::set<LeafNode *>::iterator iter=other->leaves.begin(); iter != other->leaves.end(); iter++) {
-        this->leaves.insert(*iter);
-    }
+    this->leaves = other->leaves;
     
     for (NodeList::iterator iter=other->nodes.begin(); iter != other->nodes.end(); iter++) {
         InternalNode *clone = new InternalNode(*iter);
-        cloneMap.insert( std::pair<InternalNode *,InternalNode *>(*iter,clone) );
+        cloneMap.insert(std::pair<InternalNode *,InternalNode *>(*iter,clone) );
         this->nodes.push_back(clone);
     }
-    
-    this->root = cloneMap[other->root];
     
     for (NodeList::iterator iter=nodes.begin(); iter != nodes.end(); iter++) {
         InternalNode *node = *iter;
@@ -30,6 +26,31 @@ Dendrogram::Dendrogram(Dendrogram *other)
         }
         if (node->getRight()->type == NODE_INTERNAL) {
             node->setRight(cloneMap[node->getRight()]);
+        }
+    }
+    
+    this->root = cloneMap[((InternalNode *)other->root)];
+    
+    validateCopy(root);
+}
+
+void Dendrogram::validateCopy(DendrogramNode *node)
+{
+    if (node->type == NODE_INTERNAL) {
+        if (std::find(nodes.begin(), nodes.end(), (InternalNode *)node)==nodes.end()) {
+            Log::warn("Dendrogram","Failed copy validation (internal)");
+            node->print(0);
+            std::cout << node << std::endl;
+            exit(1);
+        } else {
+            validateCopy(((InternalNode *)node)->getLeft());
+            validateCopy(((InternalNode *)node)->getRight());
+        }
+    } else {
+        if (leaves.find((LeafNode *)node) == leaves.end()) {
+            Log::warn("Dendrogram","Failed copy validation (leaf)");
+            node->print(0);
+            exit(1);
         }
     }
 }
@@ -69,15 +90,15 @@ void Dendrogram::updateProbabilities()
     }
 }
 
-void Dendrogram::print()
+void Dendrogram::print(Corpus *corpus)
 {
-    this->root->print();
+    this->root->print(0,corpus);
 }
 
-double Dendrogram::sample()
+bool Dendrogram::sample()
 {
     if (root == NULL) {
-        return 0.0f;
+        return false;
     }
     InternalNode *node = NULL;
     int randomIndex = rand()%nodes.size();
@@ -91,20 +112,20 @@ double Dendrogram::sample()
     }
     
     double oldLikelihood = this->likelihood();
-    node->permute();
+    bool didPermute = node->permute();
     double newLikelihood = this->likelihood();
     if (newLikelihood >= oldLikelihood) {
-        return newLikelihood;
+        return didPermute;
     }
     else {
         double acceptProbability = (rand()%10000)/10000.0; // TODO Be more random!
-        if (acceptProbability > newLikelihood / oldLikelihood) {
+        if (acceptProbability < exp(oldLikelihood-newLikelihood)) {
             node->revert();
             newLikelihood = oldLikelihood;
         }
     }
     
-    return newLikelihood;
+    return false;
 }
 
 void Dendrogram::addLeaf(Node leaf, Node hint)

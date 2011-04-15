@@ -3,6 +3,7 @@
 
 #include "graph.h"
 #include "dendrogram_node.h"
+#include "corpus.h"
 #include <set>
 #include <vector>
 
@@ -16,15 +17,16 @@ protected:
     std::set<LeafNode *>leaves;
     void updateProbabilities();
     InternalNode *findParent(Node node, InternalNode *subtree);
+    void validateCopy(DendrogramNode *node);
 public:
     NodeList nodes;
     
 	Dendrogram(Graph *graph);
     Dendrogram(Dendrogram *dendrogram);
-    double sample();
+    bool sample();
     double likelihood();
     DendrogramNode *getRoot();
-    void print();
+    void print(Corpus *corpus=NULL);
     void addLeaf(Node leaf, Node hint=0);
 };
 

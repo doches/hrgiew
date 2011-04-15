@@ -22,16 +22,18 @@ ConsensusNode::ConsensusNode()
     this->type = NODE_INTERNAL;
 }
 
-std::string ConsensusNode::toString()
+std::string ConsensusNode::toString(Corpus *corpus)
 {
     std::string str = "(";
     for (std::set<ConsensusNode *>::iterator iter=children.begin(); iter!=children.end(); iter++) {
-        str += (*iter)->toString();
-        
-        if (++iter != children.end()) {
-            str += " ";
+        if (*iter != NULL) {
+            str += (*iter)->toString(corpus);
+            
+            if (++iter != children.end()) {
+                str += " ";
+            }
+            --iter;
         }
-        --iter;
     }
     str += ")";
     return str;
@@ -43,19 +45,26 @@ ConsensusLeaf::ConsensusLeaf(Node value) : ConsensusNode()
     this->type = NODE_LEAF;
 }
 
-std::string ConsensusLeaf::toString()
+std::string ConsensusLeaf::toString(Corpus *corpus)
 {
     std::ostringstream oss;
-    oss << this->value;
-    
-    return "<"+oss.str()+">";
+    if (corpus != NULL) {
+        oss << corpus->indexToString(this->value);
+    } else {
+        oss << "<" << this->value << ">";
+    }
+    return oss.str();
 }
 
 bool clusterCompare(Cluster a, Cluster b) {
-    return a.size() < b.size();
+    if (a.size() != b.size()) {
+        return a.size() < b.size();
+    }
+    
+    return a < b;
 }
 
-Consensus::Consensus(DendrogramSet dendrograms, Graph *graph)
+Consensus::Consensus(DendrogramSet dendrograms, Graph *graph, Corpus *corpus)
 {
     std::map<Cluster,double,bool(*)(Cluster,Cluster)> clusterWeights(&clusterCompare);
     double totalWeight = 0.0f;
@@ -64,7 +73,7 @@ Consensus::Consensus(DendrogramSet dendrograms, Graph *graph)
     for (DendrogramSet::iterator iter = dendrograms.begin(); iter != dendrograms.end(); iter++) {
         std::set<Cluster> clusters = getClusters(*iter);
         
-        double likelihood = (*iter)->likelihood();
+        double likelihood = 1.0/(-(*iter)->likelihood());
         for (std::set<Cluster>::iterator citer = clusters.begin(); citer != clusters.end(); citer++) {
             clusterWeights[*citer] += likelihood;
         }
@@ -80,18 +89,26 @@ Consensus::Consensus(DendrogramSet dendrograms, Graph *graph)
         if (iter->second < 0.5) {
             toDelete.insert(iter->first);
         }
-//        
-//        std::cout << "[";
-//        for (Cluster::iterator word = iter->first.begin(); word != iter->first.end(); word++) {
-//            std::cout << *word << " ";
-//        }
-//        std::cout << "] " << iter->second << "\n";
     }
+
     
     // Remove clusters with < 50% likelihood.
     for (std::set<Cluster>::iterator iter=toDelete.begin(); iter != toDelete.end(); iter++) {
         clusterWeights.erase(*iter);
     }
+    
+    // DEBUG: print retained clusters
+//    for (std::map<Cluster,double>::iterator iter = clusterWeights.begin(); iter != clusterWeights.end(); iter++) {
+//        std::cout << "[";
+//        for (Cluster::iterator word = iter->first.begin(); word != iter->first.end(); word++) {
+//            if (corpus == NULL) {
+//                std::cout << *word << " ";
+//            } else {
+//                std::cout << corpus->indexToString(*word) << " ";
+//            }
+//        }
+//        std::cout << "] " << iter->second << "\n";
+//    }
     
     // Keep a running map of leaf strings -> highest parent
     std::map<Node,ConsensusNode *>foundIn;
@@ -118,9 +135,9 @@ Consensus::Consensus(DendrogramSet dendrograms, Graph *graph)
     }
 }
 
-std::string Consensus::toString()
+std::string Consensus::toString(Corpus *corpus)
 {
-    return this->root->toString();
+    return this->root->toString(corpus);
 }
 
 std::set<Cluster> Consensus::getClusters(Dendrogram *dendro)

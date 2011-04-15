@@ -26,6 +26,7 @@ Word Corpus::stringToIndex(const char *word, bool *isNewWord)
     if (foundIter == wordmap.end()) {
         wordmap[target] = uniqueWords++;
         foundIter = wordmap.find(target);
+        reverseWordmap[uniqueWords-1] = target;
         if (isNewWord != NULL)
             *isNewWord = true;
     } else if(isNewWord != NULL) {
@@ -33,6 +34,11 @@ Word Corpus::stringToIndex(const char *word, bool *isNewWord)
     }
     
     return foundIter->second;
+}
+
+std::string Corpus::indexToString(Word word)
+{
+    return reverseWordmap[word];
 }
 
 void Corpus::eachDocument(void (*document_callback)(Word, Document, bool))

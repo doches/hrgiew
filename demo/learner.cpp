@@ -9,11 +9,16 @@
 #include "corpus.h"
 #include "dendrogram.h"
 #include "graph.h"
+#include "consensus.h"
+#include "progressbar.h"
+#include "statusbar.h"
 
 #include <math.h>
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <stdlib.h>
+#include <time.h>
 using namespace std;
 
 typedef std::map<Word, unsigned int> WordVector;
@@ -27,30 +32,102 @@ WordVectorMap wordCounts;
 Graph *graph;
 Dendrogram *dendrogram;
 MagnitudeMap magnitude;
+statusbar *status;
 unsigned int documentIndex = 0;
+
+int samplesPerUpdate = 0;
+int postCorpusSamples = 0;
+int consensusSpread = 0;
+int consensusSamples = 0;
+
+void usage()
+{
+    cout << "Reads a target corpus and produces a consensus hierarchy" << endl;
+    cout << endl;
+    cout << "Usage: ./learner <path/to/corpus> <samplesPerUpdate> <postCorpusSamples> <consensusSpread> <consensusSamples>" << endl;
+    exit(1);
+}
 
 int main(int argc, char **argv)
 {
+    if (argc != 6) {
+        usage();
+    }
+    
+    srand(time(0));
+    
     Corpus *targetCorpus = new Corpus(argv[1]);
+    samplesPerUpdate = atoi(argv[2]);
+    postCorpusSamples = atoi(argv[3]);
+    consensusSpread = atoi(argv[4]);
+    consensusSamples = atoi(argv[5]);
+    
     graph = new Graph();
     dendrogram = new Dendrogram(graph);
+    status = statusbar_new("Processing");
     targetCorpus->eachDocument(&eachDocument);
+    statusbar_finish(status);
     
     cout << dendrogram->likelihood() << endl;
-    dendrogram->print();
     
-//    // Print out contexts
-//    for (WordVectorMap::iterator mapIterator = wordCounts.begin(); mapIterator!=wordCounts.end(); mapIterator++) {
-//        Word target = (*mapIterator).first;
-//        cout << target << ": ";
-//        for (WordVector::iterator countIterator = mapIterator->second.begin(); countIterator!=mapIterator->second.end(); countIterator++) {
-//            Word context = countIterator->first;
-//            unsigned int count = countIterator->second;
-//            
-//            cout << context << "("<<count<<") ";
-//        }
-//        cout << endl;
-//    }
+    Dendrogram *bestDendrogram = NULL;
+    double bestScore = 0.0;
+    
+    progressbar *sampleProgress = progressbar_new("Post-sampling",postCorpusSamples);
+    for (int i=-1; i<postCorpusSamples; i++) {
+        dendrogram->sample();
+        
+        if (dendrogram->likelihood() > bestScore || bestDendrogram == NULL) {
+            if (bestDendrogram != NULL) {
+                delete bestDendrogram;
+            }
+            bestDendrogram = new Dendrogram(dendrogram);
+            bestScore = dendrogram->likelihood();
+        }
+        progressbar_inc(sampleProgress);
+    }
+    progressbar_finish(sampleProgress);
+    
+    cout << endl << "*** Final sampled dendrogram ***" << endl;
+    cout << "sampled likelihood: " << bestDendrogram->likelihood() << std::endl;
+    bestDendrogram->print(targetCorpus);
+    cout << endl;
+    
+    int sampleCount = consensusSpread;
+    DendrogramSet samples;
+    progressbar *consensusProgress = progressbar_new("Seeking consensus",sampleCount);
+    for (int i=0; i<sampleCount; i++) {
+        bestDendrogram->sample();
+        if (i % (sampleCount / consensusSamples) == 0) {
+            Dendrogram *sampledDendrogram = new Dendrogram(bestDendrogram);
+            samples.insert(sampledDendrogram);
+            cout << endl << "*** Consensus dendrogram ***"<<endl;
+            cout << "sampled likelihood: " << sampledDendrogram->likelihood() << std::endl;
+            cout << endl;
+        }
+        progressbar_inc(consensusProgress);
+    }
+    progressbar_finish(consensusProgress);
+    
+    Consensus *hierarchy = new Consensus(samples, graph, targetCorpus);
+    cout << endl<<"*** Consensus Hierarchy ***" << endl;
+    std::cout << hierarchy->toString(targetCorpus) << std::endl;
+}
+
+void printContexts()
+{
+    // Print out contexts
+    for (WordVectorMap::iterator mapIterator = wordCounts.begin(); mapIterator!=wordCounts.end(); mapIterator++) {
+        Word target = (*mapIterator).first;
+        cout << target << ": ";
+        for (WordVector::iterator countIterator = mapIterator->second.begin(); countIterator!=mapIterator->second.end(); countIterator++) {
+            Word context = countIterator->first;
+            unsigned int count = countIterator->second;
+            
+            cout << context << "("<<count<<") ";
+        }
+        cout << endl;
+    }
 }
 
 void eachDocument(Word target, Document doc, bool newTarget)
@@ -88,18 +165,21 @@ void eachDocument(Word target, Document doc, bool newTarget)
     if (newTarget) {
         dendrogram->addLeaf(target);
     }
-    dendrogram->sample();
+    for (int i=0; i<samplesPerUpdate; i++) {
+        dendrogram->sample();
+    }
     
     documentIndex++;
     
     if (documentIndex > 0 && documentIndex % 10 == 0) {
-        cout << documentIndex << " documents processed"<<endl;// (dendrogram likelihood: "<<dendrogram->likelihood() <<")"<<endl;
         char fname[20];
         sprintf(fname,"graph.%d.weights",documentIndex);
         std::ofstream fout(fname);
         fout << graph->toString();
         fout.close();
     }
+    
+    statusbar_inc(status);
 }
 
 unsigned int dot(WordVector a, WordVector b)

@@ -14,6 +14,7 @@
 #include "graph.h"
 #include "dendrogram.h"
 #include "dendrogram_node.h"
+#include "corpus.h"
 
 class ConsensusNode
 {
@@ -23,7 +24,7 @@ public:
     
     ConsensusNode();
     ConsensusNode(std::set<ConsensusNode *> children);
-    virtual std::string toString();
+    virtual std::string toString(Corpus *corpus=NULL);
 };
 
 class ConsensusLeaf : public ConsensusNode
@@ -32,7 +33,7 @@ public:
     Node value;
     
     ConsensusLeaf(Node value);
-    std::string toString();
+    std::string toString(Corpus *corpus=NULL);
 };
 
 typedef std::set<Dendrogram *> DendrogramSet;
@@ -45,8 +46,8 @@ protected:
     std::set<ConsensusNode *>nodes;
     ConsensusNode *root;
 public:
-    Consensus(DendrogramSet dendrograms, Graph *graph);
-    std::string toString();
+    Consensus(DendrogramSet dendrograms, Graph *graph, Corpus *corpus=NULL);
+    std::string toString(Corpus *corpus=NULL);
 };
 
 #endif
