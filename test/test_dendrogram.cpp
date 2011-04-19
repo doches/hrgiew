@@ -24,6 +24,25 @@ bool DendrogramTest::run()
     testcase(((InternalNode *)(dendro->getRoot()))->getLeft() != NULL, "Dendrogram root has NULL left child");
     testcase(((InternalNode *)(dendro->getRoot()))->getRight() != NULL, "Dendrogram root has NULL right child");
     
+    for (NodeList::iterator iterator=dendro->nodes.begin(); iterator!=dendro->nodes.end(); iterator++) {
+        DendrogramNode *node = *iterator;
+        
+        if (node != dendro->getRoot()) {
+            test_not_equal(node->parent,NULL,"Non-root node has NULL parent");
+        }
+        
+        if (node->type == NODE_INTERNAL) {
+            InternalNode *internal = (InternalNode *)node;
+            if (internal->getLeft() != NULL) {
+                test_equal(internal, internal->getLeft()->parent, "Left child of X does not have X as parent");
+            }
+            
+            if (internal->getRight() != NULL) {
+                test_equal(internal, internal->getRight()->parent, "Right child of X does not have X as parent");
+            }
+        }
+    }
+    
 	delete dendro;
 	delete graph;
     

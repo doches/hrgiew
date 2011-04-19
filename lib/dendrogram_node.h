@@ -8,7 +8,9 @@ typedef enum _Permutation_t { PERMUTE_LL, PERMUTE_LR, PERMUTE_RL, PERMUTE_RR, PE
 
 typedef enum _NodeType_t { NODE_LEAF, NODE_INTERNAL, NODE_NONE } NodeType;
 
-#define SWAP(_A_,_B_) DendrogramNode *temp = _A_; _A_ = _B_; _B_ = temp;
+#define SWAP(_A_,_B_) DendrogramNode *temp = _A_; _A_ = _B_; _B_ = temp; 
+
+class InternalNode;
 
 class DendrogramNode
 {
@@ -18,6 +20,8 @@ public:
     DendrogramNode(NodeType type=NODE_NONE, Node value=0);
     virtual std::set<Node> getChildren() = 0;
     virtual void print(int level=0, Corpus *corpus=NULL) = 0;
+    
+    InternalNode *parent;
 };
 
 class InternalNode : public DendrogramNode

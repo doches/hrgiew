@@ -27,6 +27,9 @@ Dendrogram::Dendrogram(Dendrogram *other)
         if (node->getRight()->type == NODE_INTERNAL) {
             node->setRight(cloneMap[node->getRight()]);
         }
+        if (node->parent != NULL) {
+            node->parent = (InternalNode *)cloneMap[node->parent];
+        }
     }
     
     this->root = cloneMap[((InternalNode *)other->root)];

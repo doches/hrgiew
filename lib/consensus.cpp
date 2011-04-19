@@ -149,7 +149,6 @@ std::string Consensus::toDot(Corpus *corpus)
         
         if (node->type == NODE_INTERNAL) {
             node->uid = nodeIndex++;
-        } else { 
         }
     }
     for (std::set<ConsensusNode *>::iterator iter=nodes.begin(); iter != nodes.end(); iter++) {

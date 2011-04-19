@@ -3,9 +3,13 @@
 #include "logger.h"
 #include <iostream>
 
-DendrogramNode::DendrogramNode(NodeType type, Node value) : value(value), type(type) { }
+DendrogramNode::DendrogramNode(NodeType type, Node value) : value(value), type(type), parent(NULL) { }
 
-InternalNode::InternalNode(DendrogramNode *left, DendrogramNode *right) : DendrogramNode(NODE_INTERNAL), left(left), right(right), lastPermutation(PERMUTE_NONE), probability(0.0f) { }
+InternalNode::InternalNode(DendrogramNode *left, DendrogramNode *right) : DendrogramNode(NODE_INTERNAL), left(left), right(right), lastPermutation(PERMUTE_NONE), probability(0.0f) 
+{
+    left->parent = this;
+    right->parent = this;
+}
 
 InternalNode::InternalNode(InternalNode *copy)
 {
@@ -14,6 +18,7 @@ InternalNode::InternalNode(InternalNode *copy)
     this->left = copy->left;
     this->right = copy->right;
     this->type = NODE_INTERNAL;
+    this->parent = copy->parent;
 }
 
 Permutation InternalNode::chooseRandomPermutation()
@@ -35,6 +40,11 @@ bool InternalNode::permute(Permutation permutation)
             if (left->type == NODE_INTERNAL) {
                 SWAP(((InternalNode *)left)->left,right);
                 ((InternalNode *)left)->resetChildCache();
+                
+                left->parent = this;
+                right->parent = this;
+                ((InternalNode *)left)->left->parent = (InternalNode *)left;
+                
                 return true;
             }
             break;
@@ -42,6 +52,11 @@ bool InternalNode::permute(Permutation permutation)
             if (left->type == NODE_INTERNAL) {
                 SWAP(((InternalNode *)left)->right,right);
                 ((InternalNode *)left)->resetChildCache();
+                
+                left->parent = this;
+                right->parent = this;
+                ((InternalNode *)left)->right->parent = (InternalNode *)left;
+                
                 return true;
             }
             break;
@@ -49,6 +64,11 @@ bool InternalNode::permute(Permutation permutation)
             if (right->type == NODE_INTERNAL) {
                 SWAP(((InternalNode *)right)->left,left);
                 ((InternalNode *)right)->resetChildCache();
+                
+                left->parent = this;
+                right->parent = this;
+                ((InternalNode *)right)->left->parent = (InternalNode *)right;
+                
                 return true;
             }
             break;
@@ -56,6 +76,10 @@ bool InternalNode::permute(Permutation permutation)
             if (right->type == NODE_INTERNAL) {
                 SWAP(((InternalNode *)right)->right,left);
                 ((InternalNode *)right)->resetChildCache();
+                
+                left->parent = this;
+                right->parent = this;
+                ((InternalNode *)right)->right->parent = (InternalNode *)right;
                 
                 return true;
             }
@@ -102,11 +126,13 @@ DendrogramNode *InternalNode::getRight()
 void InternalNode::setLeft(DendrogramNode *left)
 {
     this->left = left;
+    left->parent = this;
 }
 
 void InternalNode::setRight(DendrogramNode *right)
 {
     this->right = right;
+    right->parent = this;
 }
 
 std::set<Node>InternalNode::getChildren()
