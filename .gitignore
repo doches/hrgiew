@@ -1,0 +1,9 @@
+*.o
+*.weights
+*.dot
+*.png
+*.dSYM
+.DS_Store
+*.xcodeproj
+*.out
+corpus.length

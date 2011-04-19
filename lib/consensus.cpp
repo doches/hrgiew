@@ -90,7 +90,6 @@ Consensus::Consensus(DendrogramSet dendrograms, Graph *graph, Corpus *corpus)
             toDelete.insert(iter->first);
         }
     }
-
     
     // Remove clusters with < 50% likelihood.
     for (std::set<Cluster>::iterator iter=toDelete.begin(); iter != toDelete.end(); iter++) {
@@ -138,6 +137,46 @@ Consensus::Consensus(DendrogramSet dendrograms, Graph *graph, Corpus *corpus)
 std::string Consensus::toString(Corpus *corpus)
 {
     return this->root->toString(corpus);
+}
+
+std::string Consensus::toDot(Corpus *corpus)
+{
+    std::ostringstream dot;
+    dot << "graph Consensus {" << std::endl;
+    int nodeIndex = 0;
+    for (std::set<ConsensusNode *>::iterator iter=nodes.begin(); iter != nodes.end(); iter++) {
+        ConsensusNode *node = *iter;
+        
+        if (node->type == NODE_INTERNAL) {
+            node->uid = nodeIndex++;
+        } else { 
+        }
+    }
+    for (std::set<ConsensusNode *>::iterator iter=nodes.begin(); iter != nodes.end(); iter++) {
+        ConsensusNode *node = *iter;
+        dot << "\tINTERNAL" << node->uid << " [label=\"\", shape=point];" << std::endl;
+        for(std::set<ConsensusNode *>::iterator childIter=node->children.begin(); childIter != node->children.end(); childIter++) {
+            ConsensusNode *child = *childIter;
+            dot << "\t" << (node->type == NODE_INTERNAL ? "INTERNAL" : "LEAF") << node->uid << " -- ";
+            if (child->type == NODE_INTERNAL) {
+                dot << "INTERNAL" << child->uid << ";" << std::endl;
+            } else {
+                Node value = ((ConsensusLeaf *)child)->value;
+                dot << "LEAF" << value << ";" << std::endl;
+                dot << "\tLEAF" << value << " [label=\"";
+                if (corpus == NULL) {
+                    dot << value;
+                } else {
+                    dot << corpus->indexToString(value);
+                } 
+                dot << "\"];"<<std::endl;
+            }
+        }
+    }
+    
+    dot << "}"<<std::endl;
+    
+    return dot.str();
 }
 
 std::set<Cluster> Consensus::getClusters(Dendrogram *dendro)

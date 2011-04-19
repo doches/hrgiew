@@ -17,6 +17,7 @@ protected:
     std::string path;
     WordMap wordmap;
     ReverseWordMap reverseWordmap;
+    unsigned int documentCount;
     
     unsigned int uniqueWords;
 public:
@@ -24,6 +25,7 @@ public:
     Word stringToIndex(const char *word, bool *isNewWord = NULL);
     std::string indexToString(Word word);
     void eachDocument(void (*document_callback)(Word, Document, bool));
+    unsigned int size();
 };
 
 #endif

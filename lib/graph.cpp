@@ -33,8 +33,6 @@ std::string Graph::toString()
     for (std::map<Key, Edge *>::iterator iterator=edges.begin(); iterator!=edges.end(); iterator++) {
         if (iterator->second != NULL) { // WTF, Holmes...
             str << iterator->first.first << "\t" << iterator->first.second << "\t" << iterator->second->weight << std::endl;
-        } else {
-            str << iterator->first.first << "\t" << iterator->first.second << std::endl;
         }
     }
     

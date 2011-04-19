@@ -43,5 +43,5 @@ int main(int argc, const char **argv)
     }
     
     Consensus *hierarchy = new Consensus(samples, graph);
-    std::cout << hierarchy->toString() << std::endl;
+    std::cout << hierarchy->toDot() << std::endl;
 }

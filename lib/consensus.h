@@ -21,6 +21,7 @@ class ConsensusNode
 public:
     std::set<ConsensusNode *> children;
     NodeType type;
+    unsigned int uid;
     
     ConsensusNode();
     ConsensusNode(std::set<ConsensusNode *> children);
@@ -48,6 +49,7 @@ protected:
 public:
     Consensus(DendrogramSet dendrograms, Graph *graph, Corpus *corpus=NULL);
     std::string toString(Corpus *corpus=NULL);
+    std::string toDot(Corpus *corpus=NULL);
 };
 
 #endif

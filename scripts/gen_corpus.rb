@@ -4,12 +4,21 @@ percent_noise = ARGV.shift.to_f
 
 line_count = ARGV.empty? ? 200 : ARGV.shift.to_i
 
-words = [
-    %w{a1 a2 a3},
-    %w{b1 b2},
-    %w{c1 c2 c3},
-    %w{z1 z2 z3 z4}
-]
+clusters = 10
+words_per_cluster = [2,5,10,3,5,4]
+
+words = []
+char = 'a'
+(0..clusters-1).each { |i| 
+    set = []
+    
+    (0..(words_per_cluster[(rand*words_per_cluster.size)]-1)).each { |x|
+        set.push "#{char}#{x}"
+    }
+    
+    words.push set
+    char = (char[0] + 1).chr
+}
 
 features = words.map { |set| (0..10).map { |i| (rand*1000).to_i } }
 all = features.flatten

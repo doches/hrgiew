@@ -32,7 +32,7 @@ WordVectorMap wordCounts;
 Graph *graph;
 Dendrogram *dendrogram;
 MagnitudeMap magnitude;
-statusbar *status;
+progressbar *status;
 unsigned int documentIndex = 0;
 
 int samplesPerUpdate = 0;
@@ -64,9 +64,9 @@ int main(int argc, char **argv)
     
     graph = new Graph();
     dendrogram = new Dendrogram(graph);
-    status = statusbar_new("Processing");
+    status = progressbar_new("Processing",targetCorpus->size());
     targetCorpus->eachDocument(&eachDocument);
-    statusbar_finish(status);
+    progressbar_finish(status);
     
     cout << dendrogram->likelihood() << endl;
     
@@ -112,6 +112,10 @@ int main(int argc, char **argv)
     Consensus *hierarchy = new Consensus(samples, graph, targetCorpus);
     cout << endl<<"*** Consensus Hierarchy ***" << endl;
     std::cout << hierarchy->toString(targetCorpus) << std::endl;
+    
+    std::ofstream fout("consensus.dot");
+    fout << hierarchy->toDot(targetCorpus) << std::endl;
+    fout.close();
 }
 
 void printContexts()
@@ -179,7 +183,7 @@ void eachDocument(Word target, Document doc, bool newTarget)
         fout.close();
     }
     
-    statusbar_inc(status);
+    progressbar_inc(status);
 }
 
 unsigned int dot(WordVector a, WordVector b)

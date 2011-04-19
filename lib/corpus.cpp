@@ -17,6 +17,12 @@ Corpus::Corpus(std::string filename)
 {
     path = filename;
     uniqueWords = 0;
+    
+    system((std::string("wc -l < \"")+filename+std::string("\" > corpus.length")).c_str());
+    
+    std::ifstream fin("corpus.length",std::ifstream::in);
+    fin >> documentCount;
+    fin.close();
 }
 
 Word Corpus::stringToIndex(const char *word, bool *isNewWord)
@@ -41,6 +47,11 @@ std::string Corpus::indexToString(Word word)
     return reverseWordmap[word];
 }
 
+unsigned int Corpus::size()
+{
+    return documentCount;
+}
+
 void Corpus::eachDocument(void (*document_callback)(Word, Document, bool))
 {
     std::ifstream fin(path.c_str(),std::ifstream::in);
@@ -51,7 +62,7 @@ void Corpus::eachDocument(void (*document_callback)(Word, Document, bool))
         while (!fin.eof()) {
             std::getline(fin,line);
             if (line.size() > 200) {
-                Log::message("Corpus","%s:%d too long (> 200) characters.",path.c_str(),lineIndex,Log::ERROR);
+                Log::message("Corpus","%s line %d too long (> 200 characters).",path.c_str(),lineIndex,Log::ERROR);
                 exit(1);
             }
             strcpy(cline,line.c_str());
