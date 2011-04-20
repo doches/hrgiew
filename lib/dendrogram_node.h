@@ -37,8 +37,8 @@ public:
 	InternalNode(DendrogramNode *left, DendrogramNode *right);
     InternalNode(InternalNode *other);
     
-    bool permute(Permutation permutation=PERMUTE_NONE);
-    void revert();
+    std::set<InternalNode *> permute(Permutation permutation=PERMUTE_NONE);
+    std::set<InternalNode *> revert();
     
     void resetChildCache();
     DendrogramNode *getLeft();
@@ -48,6 +48,8 @@ public:
     double probability;
     std::set<Node> getChildren();
     void print(int level=0, Corpus *corpus=NULL);
+    
+    bool needsUpdate;
 };
 
 class LeafNode : public DendrogramNode

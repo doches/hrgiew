@@ -17,6 +17,7 @@ Dendrogram::Dendrogram(Dendrogram *other)
         InternalNode *clone = new InternalNode(*iter);
         cloneMap.insert(std::pair<InternalNode *,InternalNode *>(*iter,clone) );
         this->nodes.push_back(clone);
+        modified.insert(clone);
     }
     
     for (NodeList::iterator iter=nodes.begin(); iter != nodes.end(); iter++) {
@@ -61,6 +62,7 @@ void Dendrogram::validateCopy(DendrogramNode *node)
 Dendrogram::Dendrogram(Graph *graph) : graph(graph)
 {
     std::set<DendrogramNode *>nodesBuild;
+    
     // Initialize builder set to contain leaf nodes.
     for (std::set<Node>::iterator iter = graph->nodes.begin(); iter != graph->nodes.end(); iter++) {
         LeafNode *leaf = new LeafNode(*iter);
@@ -75,22 +77,29 @@ Dendrogram::Dendrogram(Graph *graph) : graph(graph)
         nodesBuild.erase(parent->getRight());
         nodesBuild.insert(parent);
         nodes.push_back(parent);
+        modified.insert(parent);
     }
     
     this->root = *(nodesBuild.begin());
+    if (this->root==NULL && nodes.size() > 0) {
+        Log::warn("Dendrogram","root is NULL after graph constructor");
+        exit(1);
+    }
 }
 
 // Update probabilities for each internal node
 void Dendrogram::updateProbabilities()
-{ 
-    for (NodeList::iterator iter = nodes.begin(); iter != nodes.end(); iter++) {
+{
+    for (std::set<InternalNode *>::iterator iter=modified.begin(); iter!=modified.end(); iter++) {
         InternalNode *node = *iter;
-        if (node->type == NODE_INTERNAL) {
+        if (node->type == NODE_INTERNAL && ((InternalNode *)node)->needsUpdate) {
             std::set<Node> leftChildren = node->getLeft()->getChildren();
             std::set<Node> rightChildren = node->getRight()->getChildren();
             node->probability = graph->linksBetween(leftChildren,rightChildren) / (double)(leftChildren.size() * rightChildren.size());
+            ((InternalNode *)node)->needsUpdate = false;
         }
     }
+    modified.clear();
 }
 
 void Dendrogram::print(Corpus *corpus)
@@ -115,16 +124,22 @@ bool Dendrogram::sample()
     }
     
     double oldLikelihood = this->likelihood();
-    bool didPermute = node->permute();
+    std::set<InternalNode *> permuted = node->permute();
+    for (std::set<InternalNode *>::iterator iter = permuted.begin(); iter != permuted.end(); iter++) {
+        modified.insert(*iter);
+    }
     double newLikelihood = this->likelihood();
     if (newLikelihood >= oldLikelihood) {
-        return didPermute;
+        return true;
     }
     else {
         double acceptProbability = (rand()%10000)/10000.0; // TODO Be more random!
         double doAccept = exp(newLikelihood-oldLikelihood);
         if (acceptProbability > doAccept) {
-            node->revert();
+            permuted = node->revert();
+            for (std::set<InternalNode *>::iterator iter = permuted.begin(); iter != permuted.end(); iter++) {
+                modified.insert(*iter);
+            }
             newLikelihood = oldLikelihood;
         }
     }
@@ -172,6 +187,8 @@ void Dendrogram::addLeaf(Node leaf, Node hint)
     
     leaves.insert(leafNode);
     nodes.push_back(subparent);
+    modified.insert(parent);
+    modified.insert(subparent);
 }
 
 InternalNode *Dendrogram::findParent(Node node, InternalNode *subtree)

@@ -19,6 +19,7 @@ protected:
     InternalNode *findParent(Node node, InternalNode *subtree);
     void validateCopy(DendrogramNode *node);
 public:
+    std::set<InternalNode *> modified;
     NodeList nodes;
     
 	Dendrogram(Graph *graph);

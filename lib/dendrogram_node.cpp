@@ -5,7 +5,7 @@
 
 DendrogramNode::DendrogramNode(NodeType type, Node value) : value(value), type(type), parent(NULL) { }
 
-InternalNode::InternalNode(DendrogramNode *left, DendrogramNode *right) : DendrogramNode(NODE_INTERNAL), left(left), right(right), lastPermutation(PERMUTE_NONE), probability(0.0f) 
+InternalNode::InternalNode(DendrogramNode *left, DendrogramNode *right) : DendrogramNode(NODE_INTERNAL), left(left), right(right), lastPermutation(PERMUTE_NONE), probability(0.0f), needsUpdate(true)
 {
     left->parent = this;
     right->parent = this;
@@ -19,6 +19,7 @@ InternalNode::InternalNode(InternalNode *copy)
     this->right = copy->right;
     this->type = NODE_INTERNAL;
     this->parent = copy->parent;
+    this->needsUpdate = copy->needsUpdate;
 }
 
 Permutation InternalNode::chooseRandomPermutation()
@@ -26,8 +27,10 @@ Permutation InternalNode::chooseRandomPermutation()
     return (Permutation)(rand()%PERMUTE_NONE);
 }
 
-bool InternalNode::permute(Permutation permutation)
+std::set<InternalNode *> InternalNode::permute(Permutation permutation)
 {
+    std::set<InternalNode *> modified;
+    
     if (permutation == PERMUTE_NONE) {
         permutation = InternalNode::chooseRandomPermutation();
         lastPermutation = permutation;
@@ -44,8 +47,10 @@ bool InternalNode::permute(Permutation permutation)
                 left->parent = this;
                 right->parent = this;
                 ((InternalNode *)left)->left->parent = (InternalNode *)left;
+                this->needsUpdate = true;
+                ((InternalNode *)left)->needsUpdate = true;
                 
-                return true;
+                modified.insert((InternalNode *)left);
             }
             break;
         case PERMUTE_LR:
@@ -56,8 +61,10 @@ bool InternalNode::permute(Permutation permutation)
                 left->parent = this;
                 right->parent = this;
                 ((InternalNode *)left)->right->parent = (InternalNode *)left;
+                this->needsUpdate = true;
+                ((InternalNode *)left)->needsUpdate = true;
                 
-                return true;
+                modified.insert((InternalNode *)left);
             }
             break;
         case PERMUTE_RL:
@@ -68,8 +75,10 @@ bool InternalNode::permute(Permutation permutation)
                 left->parent = this;
                 right->parent = this;
                 ((InternalNode *)right)->left->parent = (InternalNode *)right;
+                this->needsUpdate = true;
+                ((InternalNode *)right)->needsUpdate = true;
                 
-                return true;
+                modified.insert((InternalNode *)right);
             }
             break;
         case PERMUTE_RR:
@@ -80,8 +89,10 @@ bool InternalNode::permute(Permutation permutation)
                 left->parent = this;
                 right->parent = this;
                 ((InternalNode *)right)->right->parent = (InternalNode *)right;
+                this->needsUpdate = true;
+                ((InternalNode *)right)->needsUpdate = true;
                 
-                return true;
+                modified.insert((InternalNode *)right);
             }
             break;
         default:
@@ -89,13 +100,15 @@ bool InternalNode::permute(Permutation permutation)
             exit(1);
             break;
     }
-    return false;
+    modified.insert((InternalNode *)this);
+    return modified;
 }
 
-void InternalNode::revert()
+std::set<InternalNode *> InternalNode::revert()
 {
-    permute(lastPermutation);
+    std::set<InternalNode *> modified = permute(lastPermutation);
     lastPermutation = PERMUTE_NONE;
+    return modified;
 }
 
 void InternalNode::resetChildCache()
