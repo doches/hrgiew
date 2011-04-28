@@ -46,10 +46,13 @@ protected:
     std::set<Cluster> getClusters(Dendrogram *dendro);
     std::set<ConsensusNode *>nodes;
     ConsensusNode *root;
+    std::set<ConsensusLeaf *>leaves();
 public:
     Consensus(DendrogramSet dendrograms, Graph *graph, Corpus *corpus=NULL);
     std::string toString(Corpus *corpus=NULL);
     std::string toDot(Corpus *corpus=NULL);
+    std::string toMatrix();
+    unsigned int verticesBetween(ConsensusLeaf *a, ConsensusLeaf *b, ConsensusNode *below=NULL);
 };
 
 #endif

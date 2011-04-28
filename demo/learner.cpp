@@ -116,6 +116,10 @@ int main(int argc, char **argv)
     std::ofstream fout("consensus.dot");
     fout << hierarchy->toDot(targetCorpus) << std::endl;
     fout.close();
+    
+    std::ofstream matrix("consensus.matrix");
+    matrix << hierarchy->toMatrix() << std::endl;
+    matrix.close();
 }
 
 void printContexts()

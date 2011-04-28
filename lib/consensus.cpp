@@ -191,3 +191,44 @@ std::set<Cluster> Consensus::getClusters(Dendrogram *dendro)
     
     return clusters;
 }
+
+std::set<ConsensusLeaf *> Consensus::leaves()
+{
+    std::set<ConsensusLeaf *>leaves;
+    
+    for (std::set<ConsensusNode *>::iterator iter=nodes.begin(); iter != nodes.end(); iter++) {
+        ConsensusNode *node = *iter;
+        for(std::set<ConsensusNode *>::iterator childIter=node->children.begin(); childIter != node->children.end(); childIter++) {
+            ConsensusNode *child = *childIter;
+            if (child->type == NODE_LEAF) {
+                leaves.insert((ConsensusLeaf *)child);
+            }
+        }
+    }
+    
+    return leaves;
+}
+
+std::string Consensus::toMatrix()
+{
+    std::set<ConsensusLeaf *>leaves = this->leaves();
+    std::ostringstream oss;
+    
+    for (std::set<ConsensusLeaf *>::iterator a=leaves.begin(); a!=leaves.end(); a++) {
+        for (std::set<ConsensusLeaf *>::iterator b=leaves.begin(); b!=leaves.end(); b++) {
+            oss << verticesBetween(*a,*b) << "\t";
+        }
+        oss << std::endl;
+    }
+    
+    return oss.str();
+}
+
+unsigned int Consensus::verticesBetween(ConsensusLeaf *a, ConsensusLeaf *b, ConsensusNode *below)
+{
+    if (below == NULL) {
+        below = this->root;
+    }
+    
+    return 0;
+}
