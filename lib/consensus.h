@@ -23,6 +23,7 @@ public:
     NodeType type;
     unsigned int uid;
     
+    bool subtreeContains(Node value);
     ConsensusNode();
     ConsensusNode(std::set<ConsensusNode *> children);
     virtual std::string toString(Corpus *corpus=NULL);
@@ -51,8 +52,9 @@ public:
     Consensus(DendrogramSet dendrograms, Graph *graph, Corpus *corpus=NULL);
     std::string toString(Corpus *corpus=NULL);
     std::string toDot(Corpus *corpus=NULL);
-    std::string toMatrix();
-    unsigned int verticesBetween(ConsensusLeaf *a, ConsensusLeaf *b, ConsensusNode *below=NULL);
+    std::string toMatrix(Corpus *corpus=NULL);
+    unsigned int verticesBetween(Node a, Node b, ConsensusNode *below=NULL);
+    unsigned int verticesTo(Node a, ConsensusNode *below);
 };
 
 #endif

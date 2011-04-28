@@ -16,6 +16,7 @@
 #include <math.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <map>
 #include <stdlib.h>
 #include <time.h>
@@ -40,12 +41,28 @@ int postCorpusSamples = 0;
 int consensusSpread = 0;
 int consensusSamples = 0;
 
+std::string *handle;
+
 void usage()
 {
     cout << "Reads a target corpus and produces a consensus hierarchy" << endl;
     cout << endl;
     cout << "Usage: ./learner <path/to/corpus> <samplesPerUpdate> <postCorpusSamples> <consensusSpread> <consensusSamples>" << endl;
     exit(1);
+}
+
+void makeHandle()
+{
+    char filename[80] = "\0";
+    strcpy(filename,handle->c_str());
+    
+    char *fname = strrchr(filename,'/')+1;
+    
+    ostringstream oss;
+    oss << fname << "-" << samplesPerUpdate << "-" << postCorpusSamples << "-" << consensusSpread << "-" << consensusSamples;
+    
+    handle = new std::string(oss.str());
+    cout << "Saving trial into " <<*handle << ".*" << endl;
 }
 
 int main(int argc, char **argv)
@@ -56,11 +73,14 @@ int main(int argc, char **argv)
     
     srand(time(0));
     
-    Corpus *targetCorpus = new Corpus(argv[1]);
+    handle = new std::string(argv[1]);
+    Corpus *targetCorpus = new Corpus(handle->c_str());
     samplesPerUpdate = atoi(argv[2]);
     postCorpusSamples = atoi(argv[3]);
     consensusSpread = atoi(argv[4]);
     consensusSamples = atoi(argv[5]);
+    
+    makeHandle();
     
     graph = new Graph();
     dendrogram = new Dendrogram(graph);
@@ -110,15 +130,18 @@ int main(int argc, char **argv)
     progressbar_finish(consensusProgress);
     
     Consensus *hierarchy = new Consensus(samples, graph, targetCorpus);
-    cout << endl<<"*** Consensus Hierarchy ***" << endl;
+    cout << endl <<"*** Consensus Hierarchy ***" << endl;
     std::cout << hierarchy->toString(targetCorpus) << std::endl;
     
-    std::ofstream fout("consensus.dot");
+    char temporaryFilename[120];
+    sprintf(temporaryFilename,"%s.consensus",handle->c_str());
+    std::ofstream fout(temporaryFilename);
     fout << hierarchy->toDot(targetCorpus) << std::endl;
     fout.close();
     
-    std::ofstream matrix("consensus.matrix");
-    matrix << hierarchy->toMatrix() << std::endl;
+    sprintf(temporaryFilename,"%s.matrix",handle->c_str());
+    std::ofstream matrix(temporaryFilename);
+    matrix << hierarchy->toMatrix(targetCorpus) << std::endl;
     matrix.close();
 }
 

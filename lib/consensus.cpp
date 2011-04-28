@@ -7,6 +7,7 @@
 //
 
 #include "consensus.h"
+#include "logger.h"
 #include <map>
 #include <sstream>
 #include <iostream>
@@ -37,6 +38,22 @@ std::string ConsensusNode::toString(Corpus *corpus)
     }
     str += ")";
     return str;
+}
+
+bool ConsensusNode::subtreeContains(Node value)
+{
+    if (type == NODE_LEAF) {
+        return ((ConsensusLeaf *)this)->value == value;
+    }
+    
+    for (std::set<ConsensusNode *>::iterator childIter=children.begin(); childIter!=children.end(); childIter++) {
+        ConsensusNode *child = *childIter;
+        if (child->subtreeContains(value)) {
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 ConsensusLeaf::ConsensusLeaf(Node value) : ConsensusNode()
@@ -209,14 +226,17 @@ std::set<ConsensusLeaf *> Consensus::leaves()
     return leaves;
 }
 
-std::string Consensus::toMatrix()
+std::string Consensus::toMatrix(Corpus *corpus)
 {
     std::set<ConsensusLeaf *>leaves = this->leaves();
     std::ostringstream oss;
     
     for (std::set<ConsensusLeaf *>::iterator a=leaves.begin(); a!=leaves.end(); a++) {
+        if (corpus != NULL) {
+            oss << corpus->indexToString((*a)->value) << ":\t";
+        }
         for (std::set<ConsensusLeaf *>::iterator b=leaves.begin(); b!=leaves.end(); b++) {
-            oss << verticesBetween(*a,*b) << "\t";
+            oss << verticesBetween((*a)->value,(*b)->value) << "\t";
         }
         oss << std::endl;
     }
@@ -224,11 +244,42 @@ std::string Consensus::toMatrix()
     return oss.str();
 }
 
-unsigned int Consensus::verticesBetween(ConsensusLeaf *a, ConsensusLeaf *b, ConsensusNode *below)
+unsigned int Consensus::verticesBetween(Node a, Node b, ConsensusNode *below)
 {
     if (below == NULL) {
         below = this->root;
     }
     
-    return 0;
+    unsigned int distance = 0;
+    
+    for (std::set<ConsensusNode *>::iterator nodeIter = below->children.begin(); nodeIter != below->children.end(); nodeIter++) {
+        ConsensusNode *child = *nodeIter;
+        if (child->subtreeContains(a)) {
+            if (child->subtreeContains(b)) {
+                return verticesBetween(a,b,child);
+            } else {
+                distance += verticesTo(b,below);
+            }
+        } else if (child->subtreeContains(b)) {
+            distance += verticesTo(a,below);
+        }
+    }
+    
+    return distance;
+}
+
+unsigned int Consensus::verticesTo(Node a, ConsensusNode *below)
+{
+    if (below->type == NODE_LEAF) {
+        return 0;
+    }
+    for (std::set<ConsensusNode *>::iterator nodeIter = below->children.begin(); nodeIter != below->children.end(); nodeIter++) {
+        ConsensusNode *child = *nodeIter;
+        if (child->subtreeContains(a)) {
+            return 1+verticesTo(a,child);
+        }
+    }
+    
+    Log::warn("Consensus","verticesTo() reached invalid state!");
+    exit(1);
 }
