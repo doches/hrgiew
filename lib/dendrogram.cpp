@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "dendrogram.h"
 #include "logger.h"
 #include <set>
@@ -5,6 +6,7 @@
 #include <map>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 Dendrogram::Dendrogram(Dendrogram *other)
 {

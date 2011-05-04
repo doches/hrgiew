@@ -4,6 +4,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <sstream>
+#include <stdlib.h>
+#include <cstring>
 
 Edge::Edge(Node a, Node b, double weight)
 {
@@ -45,9 +47,9 @@ bool Graph::loadFromWeights(const std::string filename)
     char line[80];
     if (fin) {
         while (!feof(fin)) {
-            fgets(line,80,fin);
+            char *res = fgets(line,80,fin);
             
-            if (strchr(line,'\t')!=NULL) {
+            if (res && strchr(line,'\t')!=NULL) {
                 Node left = Node(atoi(strtok(line,"\t")));
                 Node right = Node(atoi(strtok(NULL,"\t")));
                 double weight = atof(strtok(NULL,"\t\n"));

@@ -12,17 +12,19 @@
 #include <string>
 #include "logger.h"
 #include <stdlib.h>
+#include <cstring>
 
 Corpus::Corpus(std::string filename)
 {
     path = filename;
     uniqueWords = 0;
     
-    system((std::string("wc -l < \"")+filename+std::string("\" > corpus.length")).c_str());
-    
-    std::ifstream fin("corpus.length",std::ifstream::in);
-    fin >> documentCount;
-    fin.close();
+    int result = system((std::string("wc -l < \"")+filename+std::string("\" > corpus.length")).c_str());
+    if(!result) {
+	    std::ifstream fin("corpus.length",std::ifstream::in);
+  	  fin >> documentCount;
+    	fin.close();
+    }
 }
 
 Word Corpus::stringToIndex(const char *word, bool *isNewWord)

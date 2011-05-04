@@ -6,6 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#include <stdlib.h>
 #include "consensus.h"
 #include "logger.h"
 #include <map>
