@@ -57,13 +57,15 @@ void Corpus::eachDocument(void (*document_callback)(Word, Document, bool))
     std::ifstream fin(path.c_str(),std::ifstream::in);
     if(fin.good()) {
         std::string line;
-        char cline[200];
+        unsigned int cMaxLen = 128;
+        char *cline = (char *)malloc(cMaxLen*sizeof(char));
         int lineIndex = 0;
         while (!fin.eof()) {
             std::getline(fin,line);
-            if (line.size() > 200) {
-                Log::message("Corpus","%s line %d too long (> 200 characters).",path.c_str(),lineIndex,Log::ERROR);
-                exit(1);
+            while (line.size() > cMaxLen) {
+                cMaxLen *= 2;
+                free(cline);
+                cline = (char *)malloc(cMaxLen*sizeof(char));
             }
             strcpy(cline,line.c_str());
             if (line.size() > 1) {

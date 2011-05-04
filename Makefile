@@ -1,8 +1,8 @@
 # Makefile for lda-c and assorted tools (int->int hash, string->int hash, sparsecount, etc.)
 
 CC = g++
-OPTIMIZATION_FLAGS = 
-DEBUG_FLAGS = -g
+OPTIMIZATION_FLAGS = -O3
+DEBUG_FLAGS = 
 
 UNAME := $(shell uname)
 ifeq ($(UNAME),Linux)

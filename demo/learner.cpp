@@ -134,7 +134,7 @@ int main(int argc, char **argv)
     std::cout << hierarchy->toString(targetCorpus) << std::endl;
     
     char temporaryFilename[120];
-    sprintf(temporaryFilename,"%s.consensus",handle->c_str());
+    sprintf(temporaryFilename,"%s.dot",handle->c_str());
     std::ofstream fout(temporaryFilename);
     fout << hierarchy->toDot(targetCorpus) << std::endl;
     fout.close();
