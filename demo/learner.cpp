@@ -56,7 +56,13 @@ void makeHandle()
     char filename[80] = "\0";
     strcpy(filename,handle->c_str());
     
-    char *fname = strrchr(filename,'/')+1;
+    char *fname;
+    char *slashpos = strrchr(filename,'/');
+    if (slashpos != NULL) {
+        fname = slashpos+1;
+    } else {
+        fname = filename;
+    }
     
     ostringstream oss;
     oss << fname << "-" << samplesPerUpdate << "-" << postCorpusSamples << "-" << consensusSpread << "-" << consensusSamples;
@@ -134,10 +140,20 @@ int main(int argc, char **argv)
     std::cout << hierarchy->toString(targetCorpus) << std::endl;
     
     char temporaryFilename[120];
-    sprintf(temporaryFilename,"%s.dot",handle->c_str());
+    sprintf(temporaryFilename,"%s.graph",handle->c_str());
     std::ofstream fout(temporaryFilename);
-    fout << hierarchy->toDot(targetCorpus) << std::endl;
+    fout << graph->toString() << std::endl;
     fout.close();
+    
+    sprintf(temporaryFilename,"%s.consensus",handle->c_str());
+    std::ofstream consensus_out(temporaryFilename);
+    consensus_out << hierarchy->toString(targetCorpus) << std::endl;
+    consensus_out.close();
+    
+    sprintf(temporaryFilename,"%s.dot",handle->c_str());
+    std::ofstream dot_out(temporaryFilename);
+    dot_out << hierarchy->toDot(targetCorpus) << std::endl;
+    dot_out.close();
     
     sprintf(temporaryFilename,"%s.matrix",handle->c_str());
     std::ofstream matrix(temporaryFilename);
@@ -213,7 +229,7 @@ void eachDocument(Word target, Document doc, bool newTarget)
     progressbar_inc(status);
 }
 
-unsigned int dot(WordVector a, WordVector b)
+inline unsigned int dot(WordVector a, WordVector b)
 {
     if (a.size() > b.size()) {
         return dot(b,a);

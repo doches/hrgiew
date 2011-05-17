@@ -1,8 +1,11 @@
 # Makefile for lda-c and assorted tools (int->int hash, string->int hash, sparsecount, etc.)
 
 CC = g++
-OPTIMIZATION_FLAGS = -O3
-DEBUG_FLAGS = 
+
+# -finstrument-functions -lSaturn -m32 #Saturn profiler on OS X
+DEBUG_FLAGS = -pg
+
+OPTIMIZATION_FLAGS = 
 
 UNAME := $(shell uname)
 ifeq ($(UNAME),Linux)

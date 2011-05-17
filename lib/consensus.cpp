@@ -49,7 +49,7 @@ bool ConsensusNode::subtreeContains(Node value)
     
     for (std::set<ConsensusNode *>::iterator childIter=children.begin(); childIter!=children.end(); childIter++) {
         ConsensusNode *child = *childIter;
-        if (child->subtreeContains(value)) {
+        if (child != NULL && child->subtreeContains(value)) {
             return true;
         }
     }
@@ -174,22 +174,24 @@ std::string Consensus::toDot(Corpus *corpus)
         dot << "\tINTERNAL" << node->uid << " [label=\"\", shape=point];" << std::endl;
         for(std::set<ConsensusNode *>::iterator childIter=node->children.begin(); childIter != node->children.end(); childIter++) {
             ConsensusNode *child = *childIter;
-            dot << "\t" << (node->type == NODE_INTERNAL ? "INTERNAL" : "LEAF") << node->uid << " -- ";
-            if (child->type == NODE_INTERNAL) {
-                dot << "INTERNAL" << child->uid << ";" << std::endl;
-            } else {
-                Node value = ((ConsensusLeaf *)child)->value;
-                dot << "LEAF" << value << ";" << std::endl;
-                dot << "\tLEAF" << value << " [label=\"";
-                if (corpus == NULL) {
-                    dot << value;
+            if (child != NULL) {
+                dot << "\t" << (node->type == NODE_INTERNAL ? "INTERNAL" : "LEAF") << node->uid << " -- ";
+                if (child->type == NODE_INTERNAL) {
+                    dot << "INTERNAL" << child->uid << ";" << std::endl;
                 } else {
-                    dot << corpus->indexToString(value);
-                } 
-                dot << "\"];"<<std::endl;
+                    Node value = ((ConsensusLeaf *)child)->value;
+                    dot << "LEAF" << value << ";" << std::endl;
+                    dot << "\tLEAF" << value << " [label=\"";
+                    if (corpus == NULL) {
+                        dot << value;
+                    } else {
+                        dot << corpus->indexToString(value);
+                    } 
+                    dot << "\"];"<<std::endl;
+                }
             }
         }
-    }
+    }   
     
     dot << "}"<<std::endl;
     
@@ -218,7 +220,7 @@ std::set<ConsensusLeaf *> Consensus::leaves()
         ConsensusNode *node = *iter;
         for(std::set<ConsensusNode *>::iterator childIter=node->children.begin(); childIter != node->children.end(); childIter++) {
             ConsensusNode *child = *childIter;
-            if (child->type == NODE_LEAF) {
+            if (child != NULL && child->type == NODE_LEAF) {
                 leaves.insert((ConsensusLeaf *)child);
             }
         }
@@ -253,15 +255,19 @@ unsigned int Consensus::verticesBetween(Node a, Node b, ConsensusNode *below)
     
     unsigned int distance = 0;
     
+    if (a == b) {
+        return 0;
+    }
+    
     for (std::set<ConsensusNode *>::iterator nodeIter = below->children.begin(); nodeIter != below->children.end(); nodeIter++) {
         ConsensusNode *child = *nodeIter;
-        if (child->subtreeContains(a)) {
+        if (child != NULL && child->subtreeContains(a)) {
             if (child->subtreeContains(b)) {
                 return verticesBetween(a,b,child);
             } else {
                 distance += verticesTo(b,below);
             }
-        } else if (child->subtreeContains(b)) {
+        } else if (child != NULL && child->subtreeContains(b)) {
             distance += verticesTo(a,below);
         }
     }
@@ -276,7 +282,7 @@ unsigned int Consensus::verticesTo(Node a, ConsensusNode *below)
     }
     for (std::set<ConsensusNode *>::iterator nodeIter = below->children.begin(); nodeIter != below->children.end(); nodeIter++) {
         ConsensusNode *child = *nodeIter;
-        if (child->subtreeContains(a)) {
+        if (child != NULL && child->subtreeContains(a)) {
             return 1+verticesTo(a,child);
         }
     }
