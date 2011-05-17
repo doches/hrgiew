@@ -4,6 +4,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <sstream>
+#include <stdlib.h>
+#include <cstring>
 
 Edge::Edge(Node a, Node b, double weight)
 {

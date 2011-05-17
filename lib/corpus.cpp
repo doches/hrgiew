@@ -10,6 +10,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <stdlib.h>
+#include <cstring>
 #include "logger.h"
 #include <stdlib.h>
 

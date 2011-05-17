@@ -3,7 +3,7 @@
 CC = g++
 
 # -finstrument-functions -lSaturn -m32 #Saturn profiler on OS X
-DEBUG_FLAGS = -pg
+DEBUG_FLAGS = -g
 
 OPTIMIZATION_FLAGS = 
 

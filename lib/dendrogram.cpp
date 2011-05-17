@@ -5,6 +5,8 @@
 #include <map>
 #include <iostream>
 #include <sstream>
+#include <stdlib.h>
+#include <algorithm>
 
 Dendrogram::Dendrogram(Dendrogram *other)
 {

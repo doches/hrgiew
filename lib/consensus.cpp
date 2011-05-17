@@ -11,6 +11,7 @@
 #include <map>
 #include <sstream>
 #include <iostream>
+#include <stdlib.h>
 
 ConsensusNode::ConsensusNode(std::set<ConsensusNode *>children)
 {
