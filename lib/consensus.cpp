@@ -173,22 +173,24 @@ std::string Consensus::toDot(Corpus *corpus)
         dot << "\tINTERNAL" << node->uid << " [label=\"\", shape=point];" << std::endl;
         for(std::set<ConsensusNode *>::iterator childIter=node->children.begin(); childIter != node->children.end(); childIter++) {
             ConsensusNode *child = *childIter;
-            dot << "\t" << (node->type == NODE_INTERNAL ? "INTERNAL" : "LEAF") << node->uid << " -- ";
-            if (child->type == NODE_INTERNAL) {
-                dot << "INTERNAL" << child->uid << ";" << std::endl;
-            } else {
-                Node value = ((ConsensusLeaf *)child)->value;
-                dot << "LEAF" << value << ";" << std::endl;
-                dot << "\tLEAF" << value << " [label=\"";
-                if (corpus == NULL) {
-                    dot << value;
+            if (child != NULL) {
+                dot << "\t" << (node->type == NODE_INTERNAL ? "INTERNAL" : "LEAF") << node->uid << " -- ";
+                if (child->type == NODE_INTERNAL) {
+                    dot << "INTERNAL" << child->uid << ";" << std::endl;
                 } else {
-                    dot << corpus->indexToString(value);
-                } 
-                dot << "\"];"<<std::endl;
+                    Node value = ((ConsensusLeaf *)child)->value;
+                    dot << "LEAF" << value << ";" << std::endl;
+                    dot << "\tLEAF" << value << " [label=\"";
+                    if (corpus == NULL) {
+                        dot << value;
+                    } else {
+                        dot << corpus->indexToString(value);
+                    } 
+                    dot << "\"];"<<std::endl;
+                }
             }
         }
-    }
+    }   
     
     dot << "}"<<std::endl;
     
@@ -217,7 +219,7 @@ std::set<ConsensusLeaf *> Consensus::leaves()
         ConsensusNode *node = *iter;
         for(std::set<ConsensusNode *>::iterator childIter=node->children.begin(); childIter != node->children.end(); childIter++) {
             ConsensusNode *child = *childIter;
-            if (child->type == NODE_LEAF) {
+            if (child != NULL && child->type == NODE_LEAF) {
                 leaves.insert((ConsensusLeaf *)child);
             }
         }
