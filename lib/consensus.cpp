@@ -48,7 +48,7 @@ bool ConsensusNode::subtreeContains(Node value)
     
     for (std::set<ConsensusNode *>::iterator childIter=children.begin(); childIter!=children.end(); childIter++) {
         ConsensusNode *child = *childIter;
-        if (child->subtreeContains(value)) {
+        if (child != NULL && child->subtreeContains(value)) {
             return true;
         }
     }
@@ -254,15 +254,19 @@ unsigned int Consensus::verticesBetween(Node a, Node b, ConsensusNode *below)
     
     unsigned int distance = 0;
     
+    if (a == b) {
+        return 0;
+    }
+    
     for (std::set<ConsensusNode *>::iterator nodeIter = below->children.begin(); nodeIter != below->children.end(); nodeIter++) {
         ConsensusNode *child = *nodeIter;
-        if (child->subtreeContains(a)) {
+        if (child != NULL && child->subtreeContains(a)) {
             if (child->subtreeContains(b)) {
                 return verticesBetween(a,b,child);
             } else {
                 distance += verticesTo(b,below);
             }
-        } else if (child->subtreeContains(b)) {
+        } else if (child != NULL && child->subtreeContains(b)) {
             distance += verticesTo(a,below);
         }
     }
@@ -277,7 +281,7 @@ unsigned int Consensus::verticesTo(Node a, ConsensusNode *below)
     }
     for (std::set<ConsensusNode *>::iterator nodeIter = below->children.begin(); nodeIter != below->children.end(); nodeIter++) {
         ConsensusNode *child = *nodeIter;
-        if (child->subtreeContains(a)) {
+        if (child != NULL && child->subtreeContains(a)) {
             return 1+verticesTo(a,child);
         }
     }
