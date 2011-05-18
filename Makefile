@@ -76,7 +76,13 @@ learner: corpus.o $(LIB_OBJ) $(VENDOR_OBJ) demo/learner.cpp
 corpus.o: lib/corpus.h lib/corpus.cpp
 	$(CC) -c $(CFLAGS) lib/corpus.cpp
 
-.PHONY: clean all debug demo
+graphify: $(LIB_OBJ) $(VENDOR_OBJ) demo/graphify.cpp
+	$(CC) $(CFLAGS) $(LIB_OBJ) $(VENDOR_OBJ) demo/graphify.cpp -o graphify
+	
+distance.o: lib/distance.h lib/distance.cpp lib/corpus.h lib/graph.h
+	$(CC) -c $(CFLAGS) $(LIB_OBJ) $(VENDOR_OBJ) lib/distance.cpp
+
+.PHONY: clean all debug demo doc 
 
 debug:
 	@echo "LIB_OBJ: " $(LIB_OBJ)
@@ -93,3 +99,6 @@ clean:
 	rm -f $(EXECUTABLES)
 	rm -f **/*~
 	rm -f *~
+
+doc:
+	doxygen Doxyfile
