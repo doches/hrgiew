@@ -26,6 +26,7 @@ public:
     std::string indexToString(Word word);
     void eachDocument(void (*document_callback)(Word, Document, bool));
     unsigned int size();
+    std::string wordmapToString();
 };
 
 #endif

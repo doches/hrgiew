@@ -75,11 +75,19 @@ void eachDocument(Word target, Document document, bool isNewTarget)
     documentIndex++;
     
     if (documentIndex % SAVE_INTERVAL == 0 && documentIndex) {
+        // Save graph
         ostringstream oss;
         oss << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".graph";
         ofstream fout(oss.str().c_str());
         fout << graph->toString() << endl;
         fout.close();
+        
+        // Save wordmap
+        ostringstream wordmapFilename;
+        wordmapFilename << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".wordmap";
+        ofstream wordmapOut(wordmapFilename.str().c_str());
+        wordmapOut << targetCorpus->wordmapToString() << endl;
+        wordmapOut.close();
     }
     
     progressbar_inc(corpusProgress);

@@ -9,6 +9,7 @@
 #include "corpus.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <stdlib.h>
 #include <cstring>
@@ -87,4 +88,14 @@ void Corpus::eachDocument(void (*document_callback)(Word, Document, bool))
         }
         fin.close();
     }
+}
+
+std::string Corpus::wordmapToString()
+{
+    std::ostringstream oss;
+    for (WordMap::iterator iter = wordmap.begin(); iter != wordmap.end(); iter++) {
+        oss << iter->first << "\t" << iter->second << std::endl;
+    }
+    
+    return oss.str();
 }
