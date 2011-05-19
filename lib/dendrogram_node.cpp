@@ -129,9 +129,21 @@ void InternalNode::print(int level, Corpus *corpus)
 std::string InternalNode::toString(Corpus *corpus)
 {
     char string[80];
-    sprintf(string,"%p (%f):\t%p\t%p\n",this,probability,left,right);
+    sprintf(string,"%p (%1.10f):\t%p\t%p\n",this,probability,left,right);
     
     return std::string(string) + left->toString(corpus) + right->toString(corpus);
+}
+
+std::string InternalNode::toDot(Corpus *corpus)
+{
+    char string[80];
+    sprintf(string,"\t%p [label=\"%1.4f\", shape=\"none\"];\n",this,probability);
+    
+    char links[100];
+    sprintf(links,"\t%p -> %p;\n\t%p -> %p;\n",this,left,this,right);
+    
+    return std::string(string) + std::string(links) + 
+           left->toDot(corpus) + right->toDot(corpus);
 }
 
 DendrogramNode *InternalNode::getLeft()
@@ -201,6 +213,19 @@ std::string LeafNode::toString(Corpus *corpus)
         sprintf(string,"%p: [%u]\n",this,value);
     } else {
         sprintf(string,"%p: [%s]\n",this,corpus->indexToString(value).c_str());
+    }
+    
+    return std::string(string);
+}
+
+std::string LeafNode::toDot(Corpus *corpus)
+{
+    char string[100];
+    
+    if (corpus == NULL) {
+        sprintf(string,"\t%p [label=\"%u\"]\n",this,value);
+    } else {
+        sprintf(string,"\t%p [label=\"%s\"]\n",this,corpus->indexToString(value).c_str());
     }
     
     return std::string(string);

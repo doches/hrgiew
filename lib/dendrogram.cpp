@@ -116,6 +116,16 @@ std::string Dendrogram::toString(Corpus *corpus)
     return this->root->toString(corpus);
 }
 
+std::string Dendrogram::toDot(Corpus *corpus)
+{
+    std::ostringstream oss;
+    oss << "digraph {" << std::endl;
+    oss << root->toDot(corpus) << std::endl;
+    oss << "}" << std::endl;
+    
+    return oss.str();
+}
+
 bool Dendrogram::sample()
 {
     if (root == NULL) {

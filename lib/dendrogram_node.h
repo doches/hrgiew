@@ -21,6 +21,7 @@ public:
     virtual std::set<Node> getChildren() = 0;
     virtual void print(int level=0, Corpus *corpus=NULL) = 0;
     virtual std::string toString(Corpus *corpus=NULL) = 0;
+    virtual std::string toDot(Corpus *corpus=NULL) = 0;
     
     InternalNode *parent;
 };
@@ -50,6 +51,7 @@ public:
     std::set<Node> getChildren();
     void print(int level=0, Corpus *corpus=NULL);
     std::string toString(Corpus *corpus=NULL);
+    std::string toDot(Corpus *corpus=NULL);
     
     bool needsUpdate;
 };
@@ -61,6 +63,7 @@ public:
     std::set<Node> getChildren();
     void print(int level=0, Corpus *corpus=NULL);
     std::string toString(Corpus *corpus=NULL);
+    std::string toDot(Corpus *corpus=NULL);
 };
 
 #endif

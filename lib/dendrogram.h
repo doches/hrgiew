@@ -31,6 +31,7 @@ public:
     void print(Corpus *corpus=NULL);
     void addLeaf(Node leaf, Node hint=0);
     std::string toString(Corpus *corpus=NULL);
+    std::string toDot(Corpus *corpus=NULL);
 };
 
 #endif
