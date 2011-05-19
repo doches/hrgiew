@@ -6,6 +6,7 @@
 #include <map>
 #include <iostream>
 #include <sstream>
+#include <stdlib.h>
 #include <algorithm>
 
 Dendrogram::Dendrogram(Dendrogram *other)
@@ -108,6 +109,11 @@ void Dendrogram::updateProbabilities()
 void Dendrogram::print(Corpus *corpus)
 {
     this->root->print(0,corpus);
+}
+
+std::string Dendrogram::toString(Corpus *corpus)
+{
+    return this->root->toString(corpus);
 }
 
 bool Dendrogram::sample()

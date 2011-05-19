@@ -6,6 +6,7 @@
 #include "corpus.h"
 #include <set>
 #include <vector>
+#include <string>
 
 typedef std::vector<InternalNode *> NodeList;
 
@@ -29,6 +30,7 @@ public:
     DendrogramNode *getRoot();
     void print(Corpus *corpus=NULL);
     void addLeaf(Node leaf, Node hint=0);
+    std::string toString(Corpus *corpus=NULL);
 };
 
 #endif

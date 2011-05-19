@@ -211,7 +211,9 @@ void eachDocument(Word target, Document doc, bool newTarget)
     
     if (newTarget) {
         dendrogram->addLeaf(target);
+        
     }
+    
     for (int i=0; i<samplesPerUpdate; i++) {
         dendrogram->sample();
     }

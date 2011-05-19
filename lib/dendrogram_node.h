@@ -20,6 +20,7 @@ public:
     DendrogramNode(NodeType type=NODE_NONE, Node value=0);
     virtual std::set<Node> getChildren() = 0;
     virtual void print(int level=0, Corpus *corpus=NULL) = 0;
+    virtual std::string toString(Corpus *corpus=NULL) = 0;
     
     InternalNode *parent;
 };
@@ -48,6 +49,7 @@ public:
     double probability;
     std::set<Node> getChildren();
     void print(int level=0, Corpus *corpus=NULL);
+    std::string toString(Corpus *corpus=NULL);
     
     bool needsUpdate;
 };
@@ -58,6 +60,7 @@ public:
     LeafNode(Node value);
     std::set<Node> getChildren();
     void print(int level=0, Corpus *corpus=NULL);
+    std::string toString(Corpus *corpus=NULL);
 };
 
 #endif
