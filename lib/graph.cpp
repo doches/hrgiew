@@ -19,7 +19,7 @@ Graph::Graph(std::string filename)
 	this->valid = false;
 	if (filename.rfind(".pairs")!=std::string::npos) {
 		this->valid = loadFromPairs(filename);
-	} else if (filename.rfind(".weights")!=std::string::npos) {
+	} else if (filename.rfind(".weights")!=std::string::npos || filename.rfind(".graph")!=std::string::npos) {
 		this->valid = loadFromWeights(filename);
     }
 }
