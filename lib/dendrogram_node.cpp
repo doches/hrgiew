@@ -129,7 +129,7 @@ void InternalNode::print(int level, Corpus *corpus)
 std::string InternalNode::toString(Corpus *corpus)
 {
     char string[80];
-    sprintf(string,"%p (%f):\t%p\t%p\n",this,probability,left,right);
+    sprintf(string,"%p (%1.10f):\t%p\t%p\n",this,probability,left,right);
     
     return std::string(string) + left->toString(corpus) + right->toString(corpus);
 }
