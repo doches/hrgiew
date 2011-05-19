@@ -91,8 +91,6 @@ void Corpus::eachDocument(void (*document_callback)(Word, Document, bool))
         fin.close();
     }
 }
-<<<<<<< HEAD
-=======
 
 std::string Corpus::wordmapToString()
 {
@@ -102,3 +100,4 @@ std::string Corpus::wordmapToString()
     }
     
     return oss.str();
+}
