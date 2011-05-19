@@ -71,19 +71,8 @@ int main(int argc, const char **argv)
     progressbar_finish(corpusProgress);
 }
 
-void eachDocument(Word target, Document document, bool isNewTarget)
+void save()
 {
-    similarity->updateGraph(target,document,graph);
-    
-    if (isNewTarget) {
-        dendrogram->addLeaf(target);
-    }
-    
-    dendrogram->sample();
-    
-    documentIndex++;
-    
-    if (documentIndex % saveInterval == 0 && documentIndex) {
         // Save graph
         ostringstream oss;
         oss << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".graph";
@@ -104,6 +93,29 @@ void eachDocument(Word target, Document document, bool isNewTarget)
         ofstream dendrogramOut(dendrogramFilename.str().c_str());
         dendrogramOut << dendrogram->toString(targetCorpus) << endl;
         dendrogramOut.close();
+        
+        // Save dot
+        ostringstream dotFilename;
+        dotFilename << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".dot";
+        ofstream dotOut(dotFilename.str().c_str());
+        dotOut << dendrogram->toDot(targetCorpus) << endl;
+        dotOut.close();
+}
+
+void eachDocument(Word target, Document document, bool isNewTarget)
+{
+    similarity->updateGraph(target,document,graph);
+    
+    if (isNewTarget) {
+        dendrogram->addLeaf(target);
+    }
+    
+    dendrogram->sample();
+    
+    documentIndex++;
+    
+    if (documentIndex % saveInterval == 0 && documentIndex) {
+    	save();
     }
     
     progressbar_inc(corpusProgress);

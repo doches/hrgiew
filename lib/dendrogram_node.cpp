@@ -134,17 +134,25 @@ std::string InternalNode::toString(Corpus *corpus)
     return std::string(string) + left->toString(corpus) + right->toString(corpus);
 }
 
+static int __InternalNode_toDot_index;
 std::string InternalNode::toDot(Corpus *corpus)
 {
     char string[80];
-    sprintf(string,"\t%p [label=\"%1.4f\", shape=\"none\"];\n",this,probability);
+    sprintf(string,"\tINTERNAL%d [label=\"%1.4f\", shape=\"none\"];\n",__InternalNode_toDot_index,probability);
     
     char links[100];
-    sprintf(links,"\t%p -> %p;\n\t%p -> %p;\n",this,left,this,right);
+    sprintf(links,"\tINTERNAL%d -> %s%d;\n\tINTERNAL%d -> %s%d;\n",
+    						  __InternalNode_toDot_index,
+    						  (left->type == NODE_INTERNAL ? "INTERNAL" : "LEAF"),0,
+    						  __InternalNode_toDot_index,
+    						  (right->type == NODE_INTERNAL ? "INTERNAL" : "LEAF"),0);
     
+    __InternalNode_toDot_index++;
     return std::string(string) + std::string(links) + 
            left->toDot(corpus) + right->toDot(corpus);
 }
+
+static void InternalNode_toDot_reset() { __InternalNode_toDot_index = 0; }
 
 DendrogramNode *InternalNode::getLeft()
 {
