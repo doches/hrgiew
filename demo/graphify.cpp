@@ -1,22 +1,32 @@
 
 #define DESCRIPTION "Read a target corpus and incrementally build a semantic network of target words."
-#define USAGE       "graphify path/to/corpus.target_corpus"
-#define NUM_ARGS    1
+#define USAGE       "graphify path/to/corpus.target_corpus soutput/dir"
+#define NUM_ARGS    2
+
+#define SAVE_INTERVAL 250
 
 #include "corpus.h"
 #include "graph.h"
 #include "distance.h"
+#include "progressbar.h"
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <stdlib.h>
+#include <sstream>
 
 using namespace std;
 
 Corpus *targetCorpus;
 Graph *graph;
-Distance *distance;
+Distance *similarity;
+progressbar *corpusProgress;
+unsigned int documentIndex = 0;
 
 string filenameHandle;
+string outputDirectory;
+
+void eachDocument(Word target, Document document, bool isNewTarget);
 
 string makeFilenameHandle(const char *filename)
 {
@@ -47,6 +57,30 @@ int main(int argc, const char **argv)
     }
     
     filenameHandle = makeFilenameHandle(argv[1]);
+    outputDirectory = string(argv[2]);
     
-    cout << filenameHandle << endl;
+    // Process each document (sentence) from the target corpus
+    targetCorpus = new Corpus(string(argv[1]));
+    graph = new Graph();
+    similarity = new Distance();
+    corpusProgress = progressbar_new("Processing",targetCorpus->size());
+    targetCorpus->eachDocument(&eachDocument);
+    progressbar_finish(corpusProgress);
+}
+
+void eachDocument(Word target, Document document, bool isNewTarget)
+{
+    similarity->updateGraph(target,document,graph);
+    
+    documentIndex++;
+    
+    if (documentIndex % SAVE_INTERVAL == 0 && documentIndex) {
+        ostringstream oss;
+        oss << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".graph";
+        ofstream fout(oss.str().c_str());
+        fout << graph->toString() << endl;
+        fout.close();
+    }
+    
+    progressbar_inc(corpusProgress);
 }

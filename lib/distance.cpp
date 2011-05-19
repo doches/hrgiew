@@ -9,7 +9,7 @@ inline unsigned int __Distance_dot(WordVector a, WordVector b)
   
   unsigned int sum = 0;
   for (WordVector::iterator wordIterator=a.begin(); wordIterator!=a.end(); wordIterator++) {
-    printf("\t%u %u\n",wordIterator->second,wordIterator->first);
+//    printf("\t%u %u\n",wordIterator->second,wordIterator->first);
     sum += wordIterator->second * b[wordIterator->first];                                
   }
   
@@ -35,11 +35,11 @@ void Distance::updateGraph(Word target, Document document, Graph *graph)
     
   }
 
-  printf("(%u) ",target);
-  for(WordVector::iterator wordIter = targetVector->begin(); wordIter != targetVector->end(); wordIter++) {
-    printf("%u:%u ",wordIter->first,wordIter->second);
-  }
-  printf("\n");
+//  printf("(%u) ",target);
+//  for(WordVector::iterator wordIter = targetVector->begin(); wordIter != targetVector->end(); wordIter++) {
+//    printf("%u:%u ",wordIter->first,wordIter->second);
+//  }
+//  printf("\n");
 
   double sum = 0.0f;
   for(WordVector::iterator wordIterator=targetVector->begin(); wordIterator!=targetVector->end(); wordIterator++) {

@@ -30,7 +30,7 @@ DEMO_BIN := ${foreach src,${DEMO},${subst .cpp,, ${lastword ${subst /, ,${src}}}
 
 EXECUTABLES := ${EXECUTABLES} ${DEMO_BIN}
 
-all: ${DEMO_BIN} ${LIB_OBJ}
+all: ${DEMO_BIN} ${LIB_OBJ} ${VENDOR_OBJ}
 
 test: test.o ${LIB_OBJ} ${VENDOR_OBJ}
 	$(CC) $(CFLAGS) test.o $(LIB_OBJ) ${VENDOR_OBJ} -o tests && ./tests; rm test.o
@@ -77,10 +77,10 @@ corpus.o: lib/corpus.h lib/corpus.cpp
 	$(CC) -c $(CFLAGS) lib/corpus.cpp
 
 graphify: $(LIB_OBJ) $(VENDOR_OBJ) demo/graphify.cpp
-	$(CC) $(CFLAGS) $(LIB_OBJ) $(VENDOR_OBJ) demo/graphify.cpp -o graphify
+	$(CC) $(CFLAGS) demo/graphify.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o graphify
 	
 distance.o: lib/distance.h lib/distance.cpp lib/corpus.h lib/graph.h
-	$(CC) -c $(CFLAGS) $(LIB_OBJ) $(VENDOR_OBJ) lib/distance.cpp
+	$(CC) -c $(CFLAGS) lib/distance.cpp
 
 .PHONY: clean all debug demo doc 
 
