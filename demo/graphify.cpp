@@ -1,9 +1,7 @@
 
 #define DESCRIPTION "Read a target corpus and incrementally build a semantic network of target words."
-#define USAGE       "graphify path/to/corpus.target_corpus soutput/dir"
-#define NUM_ARGS    2
-
-#define SAVE_INTERVAL 250
+#define USAGE       "graphify path/to/corpus.target_corpus soutput/dir save_interval"
+#define NUM_ARGS    3
 
 #include "corpus.h"
 #include "graph.h"
@@ -22,6 +20,7 @@ Graph *graph;
 Distance *similarity;
 progressbar *corpusProgress;
 unsigned int documentIndex = 0;
+int saveInterval;
 
 string filenameHandle;
 string outputDirectory;
@@ -58,6 +57,7 @@ int main(int argc, const char **argv)
     
     filenameHandle = makeFilenameHandle(argv[1]);
     outputDirectory = string(argv[2]);
+    saveInterval = atoi(argv[3]);
     
     // Process each document (sentence) from the target corpus
     targetCorpus = new Corpus(string(argv[1]));
@@ -74,7 +74,7 @@ void eachDocument(Word target, Document document, bool isNewTarget)
     
     documentIndex++;
     
-    if (documentIndex % SAVE_INTERVAL == 0 && documentIndex) {
+    if (documentIndex % saveInterval == 0 && documentIndex) {
         // Save graph
         ostringstream oss;
         oss << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".graph";
