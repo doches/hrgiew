@@ -17,7 +17,9 @@ class DendrogramNode
 public:
     Node value;
     NodeType type;
+    int internalIndex;
     DendrogramNode(NodeType type=NODE_NONE, Node value=0);
+    std::string uniqueName;
     virtual std::set<Node> getChildren() = 0;
     virtual void print(int level=0, Corpus *corpus=NULL) = 0;
     virtual std::string toString(Corpus *corpus=NULL) = 0;

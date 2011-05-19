@@ -2,8 +2,18 @@
 #include "stdlib.h"
 #include "logger.h"
 #include <iostream>
+#include <sstream>
 
-DendrogramNode::DendrogramNode(NodeType type, Node value) : value(value), type(type), parent(NULL) { }
+static int __DendrogramNode_index = 0;
+static void DendrogramNode_index_reset() { __DendrogramNode_index = 0; }
+
+DendrogramNode::DendrogramNode(NodeType type, Node value) : value(value), type(type), parent(NULL)
+{
+    internalIndex = __DendrogramNode_index++;
+    std::ostringstream oss;
+    oss << (type == NODE_INTERNAL ? "INTERNAL" : "LEAF") << internalIndex;
+    this->uniqueName = oss.str();
+}
 
 InternalNode::InternalNode(DendrogramNode *left, DendrogramNode *right) : DendrogramNode(NODE_INTERNAL), left(left), right(right), lastPermutation(PERMUTE_NONE), probability(0.0f), needsUpdate(true)
 {
@@ -20,6 +30,8 @@ InternalNode::InternalNode(InternalNode *copy)
     this->type = NODE_INTERNAL;
     this->parent = copy->parent;
     this->needsUpdate = copy->needsUpdate;
+    this->internalIndex = copy->internalIndex;
+    this->uniqueName = copy->uniqueName;
 }
 
 Permutation InternalNode::chooseRandomPermutation()
@@ -134,25 +146,18 @@ std::string InternalNode::toString(Corpus *corpus)
     return std::string(string) + left->toString(corpus) + right->toString(corpus);
 }
 
-static int __InternalNode_toDot_index;
 std::string InternalNode::toDot(Corpus *corpus)
 {
-    char string[80];
-    sprintf(string,"\tINTERNAL%d [label=\"%1.4f\", shape=\"none\"];\n",__InternalNode_toDot_index,probability);
+    std::ostringstream oss;
     
-    char links[100];
-    sprintf(links,"\tINTERNAL%d -> %s%d;\n\tINTERNAL%d -> %s%d;\n",
-    						  __InternalNode_toDot_index,
-    						  (left->type == NODE_INTERNAL ? "INTERNAL" : "LEAF"),0,
-    						  __InternalNode_toDot_index,
-    						  (right->type == NODE_INTERNAL ? "INTERNAL" : "LEAF"),0);
+    oss << "\t" << this->uniqueName << "[label=\"" << this->probability << "\", shape=\"none\"];" << std::endl;
+    oss << "\t" << this->uniqueName << " -> " << left->uniqueName << ";" << std::endl;
+    oss << "\t" << this->uniqueName << " -> " << right->uniqueName << ";" << std::endl;
+    oss << left->toDot(corpus);
+    oss << right->toDot(corpus);
     
-    __InternalNode_toDot_index++;
-    return std::string(string) + std::string(links) + 
-           left->toDot(corpus) + right->toDot(corpus);
+    return oss.str();
 }
-
-static void InternalNode_toDot_reset() { __InternalNode_toDot_index = 0; }
 
 DendrogramNode *InternalNode::getLeft()
 {
@@ -231,9 +236,9 @@ std::string LeafNode::toDot(Corpus *corpus)
     char string[100];
     
     if (corpus == NULL) {
-        sprintf(string,"\t%p [label=\"%u\"]\n",this,value);
+        sprintf(string,"\t%s [label=\"%u\"]\n",uniqueName.c_str(),value);
     } else {
-        sprintf(string,"\t%p [label=\"%s\"]\n",this,corpus->indexToString(value).c_str());
+        sprintf(string,"\t%s [label=\"%s\"]\n",uniqueName.c_str(),corpus->indexToString(value).c_str());
     }
     
     return std::string(string);
