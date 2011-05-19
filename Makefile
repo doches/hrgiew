@@ -82,6 +82,9 @@ graphify: $(LIB_OBJ) $(VENDOR_OBJ) demo/graphify.cpp
 distance.o: lib/distance.h lib/distance.cpp lib/corpus.h lib/graph.h
 	$(CC) -c $(CFLAGS) lib/distance.cpp
 
+hierize: $(LIB_OBJ) $(VENDOR_OBJ) demo/hierize.cpp
+	$(CC) $(CFLAGS) demo/hierize.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o hierize
+
 .PHONY: clean all debug demo doc 
 
 debug:

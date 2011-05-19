@@ -110,6 +110,11 @@ void Dendrogram::print(Corpus *corpus)
     this->root->print(0,corpus);
 }
 
+std::string Dendrogram::toString(Corpus *corpus)
+{
+    return this->root->toString(corpus);
+}
+
 bool Dendrogram::sample()
 {
     if (root == NULL) {

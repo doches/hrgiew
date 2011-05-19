@@ -126,6 +126,14 @@ void InternalNode::print(int level, Corpus *corpus)
     right->print(level+1,corpus);
 }
 
+std::string InternalNode::toString(Corpus *corpus)
+{
+    char string[80];
+    sprintf(string,"%p (%f):\t%p\t%p\n",this,probability,left,right);
+    
+    return std::string(string) + left->toString(corpus) + right->toString(corpus);
+}
+
 DendrogramNode *InternalNode::getLeft()
 {
     return this->left;
@@ -183,4 +191,17 @@ void LeafNode::print(int level, Corpus *corpus)
     } else {
         std::cout << "[<"<<corpus->indexToString(value)<<">]" << std::endl;
     }
+}
+
+std::string LeafNode::toString(Corpus *corpus)
+{
+    char string[100];
+    
+    if (corpus == NULL) {
+        sprintf(string,"%p: [%u]\n",this,value);
+    } else {
+        sprintf(string,"%p: [%s]\n",this,corpus->indexToString(value).c_str());
+    }
+    
+    return std::string(string);
 }
