@@ -4,6 +4,7 @@
 #include <cmath>
 #include <time.h>
 #include <stdlib.h>
+#include <fstream>
 
 int main(int argc, const char **argv)
 {
@@ -33,6 +34,11 @@ int main(int argc, const char **argv)
                 delete bestDendrogram;
             }
             bestDendrogram = new Dendrogram(dendro);
+            char filename[80];
+            sprintf(filename,"fig4.%d.%f.dot",i,bestLikelihood);
+            std::ofstream fout(filename);
+            fout << bestDendrogram->toDot() << std::endl;
+            fout.close();
 //            printf("New best: %f\n",bestLikelihood);
         }
     }

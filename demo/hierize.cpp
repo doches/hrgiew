@@ -1,6 +1,6 @@
 #define DESCRIPTION "Read a target corpus and incrementally build a semantic network and a dendrogram."
-#define USAGE       "hierize path/to/corpus.target_corpus output/dir save_interval"
-#define NUM_ARGS    3
+#define USAGE       "hierize path/to/corpus.target_corpus output/dir saveInterval samplesPerUpdate"
+#define NUM_ARGS    4
 
 #include "corpus.h"
 #include "graph.h"
@@ -21,6 +21,7 @@ Distance *similarity;
 progressbar *corpusProgress;
 unsigned int documentIndex = 0;
 int saveInterval;
+int samplesPerUpdate;
 Dendrogram *dendrogram;
 
 string filenameHandle;
@@ -59,6 +60,7 @@ int main(int argc, const char **argv)
     filenameHandle = makeFilenameHandle(argv[1]);
     outputDirectory = string(argv[2]);
     saveInterval = atoi(argv[3]);
+    samplesPerUpdate = atoi(argv[4]);
     
     // Process each document (sentence) from the target corpus
     targetCorpus = new Corpus(string(argv[1]));
@@ -109,7 +111,9 @@ void eachDocument(Word target, Document document, bool isNewTarget)
         dendrogram->addLeaf(target);
     }
     
-    dendrogram->sample();
+    for(int i=0;i<samplesPerUpdate;i++) {
+	    dendrogram->sample();
+	  }
     
     documentIndex++;
     
