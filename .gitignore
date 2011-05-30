@@ -1,0 +1,16 @@
+*.o
+*.weights
+*.dot
+*.png
+*.dSYM
+.DS_Store
+*.xcodeproj
+*.out
+corpus.length
+noise_*
+figure_4
+figure_5
+learner
+tests
+gprof*
+gmon*

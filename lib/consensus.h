@@ -14,16 +14,19 @@
 #include "graph.h"
 #include "dendrogram.h"
 #include "dendrogram_node.h"
+#include "corpus.h"
 
 class ConsensusNode
 {
 public:
     std::set<ConsensusNode *> children;
     NodeType type;
+    unsigned int uid;
     
+    bool subtreeContains(Node value);
     ConsensusNode();
     ConsensusNode(std::set<ConsensusNode *> children);
-    virtual std::string toString();
+    virtual std::string toString(Corpus *corpus=NULL);
 };
 
 class ConsensusLeaf : public ConsensusNode
@@ -32,7 +35,7 @@ public:
     Node value;
     
     ConsensusLeaf(Node value);
-    std::string toString();
+    std::string toString(Corpus *corpus=NULL);
 };
 
 typedef std::set<Dendrogram *> DendrogramSet;
@@ -44,9 +47,14 @@ protected:
     std::set<Cluster> getClusters(Dendrogram *dendro);
     std::set<ConsensusNode *>nodes;
     ConsensusNode *root;
+    std::set<ConsensusLeaf *>leaves();
 public:
-    Consensus(DendrogramSet dendrograms, Graph *graph);
-    std::string toString();
+    Consensus(DendrogramSet dendrograms, Graph *graph, Corpus *corpus=NULL);
+    std::string toString(Corpus *corpus=NULL);
+    std::string toDot(Corpus *corpus=NULL);
+    std::string toMatrix(Corpus *corpus=NULL);
+    unsigned int verticesBetween(Node a, Node b, ConsensusNode *below=NULL);
+    unsigned int verticesTo(Node a, ConsensusNode *below);
 };
 
 #endif

@@ -1,15 +1,18 @@
 # Makefile for lda-c and assorted tools (int->int hash, string->int hash, sparsecount, etc.)
 
 CC = g++
-OPTIMIZATION_FLAGS = 
-DEBUG_FLAGS = -g -pg
+
+# -finstrument-functions -lSaturn -m32 #Saturn profiler on OS X
+DEBUG_FLAGS = 
+
+OPTIMIZATION_FLAGS = -O3
 
 UNAME := $(shell uname)
 ifeq ($(UNAME),Linux)
-CFLAGS = -Wall -I lib/ -I vendor/include/ -I tools/ -I test/ -Werror $(DEBUG_FLAGS) $(OPTIMIZATION_FLAGS)
+CFLAGS = -Wall -I lib/ -I vendor/include/ -I tools/ -I test/ $(DEBUG_FLAGS) $(OPTIMIZATION_FLAGS)
 endif
 ifeq ($(UNAME),Darwin)
-CFLAGS = -Wall -I lib/ -I vendor/include/ -I tools/ -I test/ -Werror $(DEBUG_FLAGS) $(OPTIMIZATION_FLAGS)
+CFLAGS = -Wall -I lib/ -I vendor/include/ -I tools/ -I test/ $(DEBUG_FLAGS) $(OPTIMIZATION_FLAGS)
 endif
 
 LFLAGS = -lm -lgsl -lgslcblas $(DEBUG_FLAGS)
@@ -27,7 +30,7 @@ DEMO_BIN := ${foreach src,${DEMO},${subst .cpp,, ${lastword ${subst /, ,${src}}}
 
 EXECUTABLES := ${EXECUTABLES} ${DEMO_BIN}
 
-all: ${DEMO_BIN} ${LIB_OBJ}
+all: ${DEMO_BIN} ${LIB_OBJ} ${VENDOR_OBJ}
 
 test: test.o ${LIB_OBJ} ${VENDOR_OBJ}
 	$(CC) $(CFLAGS) test.o $(LIB_OBJ) ${VENDOR_OBJ} -o tests && ./tests; rm test.o
@@ -73,7 +76,16 @@ learner: corpus.o $(LIB_OBJ) $(VENDOR_OBJ) demo/learner.cpp
 corpus.o: lib/corpus.h lib/corpus.cpp
 	$(CC) -c $(CFLAGS) lib/corpus.cpp
 
-.PHONY: clean all debug demo
+graphify: $(LIB_OBJ) $(VENDOR_OBJ) demo/graphify.cpp
+	$(CC) $(CFLAGS) demo/graphify.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o graphify
+	
+distance.o: lib/distance.h lib/distance.cpp lib/corpus.h lib/graph.h
+	$(CC) -c $(CFLAGS) lib/distance.cpp
+
+hierize: $(LIB_OBJ) $(VENDOR_OBJ) demo/hierize.cpp
+	$(CC) $(CFLAGS) demo/hierize.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o hierize
+
+.PHONY: clean all debug demo doc 
 
 debug:
 	@echo "LIB_OBJ: " $(LIB_OBJ)
@@ -90,3 +102,6 @@ clean:
 	rm -f $(EXECUTABLES)
 	rm -f **/*~
 	rm -f *~
+
+doc:
+	doxygen Doxyfile
