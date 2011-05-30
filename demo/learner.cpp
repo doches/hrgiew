@@ -244,3 +244,4 @@ inline unsigned int dot(WordVector a, WordVector b)
     
     return sum;
 }
+

@@ -37,7 +37,7 @@ void progressbar_free(progressbar *bar)
 void progressbar_inc(progressbar *bar)
 {
 	bar->value++;
-	unsigned int current_step = (bar->value/(float)bar->max) * bar->steps;
+	unsigned int current_step = (unsigned int)((bar->value/(float)bar->max) * bar->steps);
 	
 	// Only redraw the progressbar if the visual progress display (the current 'step')
 	// has changed. 
@@ -52,7 +52,7 @@ void progressbar_inc(progressbar *bar)
 		// Time remaining is estimated quite roughly, as the number of increments 
 		// remaining * the average time per increment thus far.
 		unsigned int offset = time(0) - (bar->start);
-		unsigned int estimate = (offset/(float)bar->value) * (bar->max - bar->value);
+		unsigned int estimate = (unsigned int)((offset/(float)bar->value) * (bar->max - bar->value));
 		progressbar_draw(bar,estimate);
 	}
 	
