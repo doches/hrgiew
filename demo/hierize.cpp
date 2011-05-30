@@ -1,4 +1,3 @@
-
 #define DESCRIPTION "Read a target corpus and incrementally build a semantic network and a dendrogram."
 #define USAGE       "hierize path/to/corpus.target_corpus output/dir saveInterval samplesPerUpdate"
 #define NUM_ARGS    4

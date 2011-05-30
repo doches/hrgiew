@@ -19,6 +19,7 @@ public:
     NodeType type;
     int internalIndex;
     DendrogramNode(NodeType type=NODE_NONE, Node value=0);
+    virtual ~DendrogramNode();
     std::string uniqueName;
     virtual std::set<Node> getChildren() = 0;
     virtual void print(int level=0, Corpus *corpus=NULL) = 0;
@@ -40,6 +41,7 @@ protected:
 public:
 	InternalNode(DendrogramNode *left, DendrogramNode *right);
     InternalNode(InternalNode *other);
+    virtual ~InternalNode();
     
     std::set<InternalNode *> permute(Permutation permutation=PERMUTE_NONE);
     std::set<InternalNode *> revert();
@@ -62,6 +64,7 @@ class LeafNode : public DendrogramNode
 {
 public:
     LeafNode(Node value);
+    virtual ~LeafNode();
     std::set<Node> getChildren();
     void print(int level=0, Corpus *corpus=NULL);
     std::string toString(Corpus *corpus=NULL);
