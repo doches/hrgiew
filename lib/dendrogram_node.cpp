@@ -15,6 +15,8 @@ DendrogramNode::DendrogramNode(NodeType type, Node value) : value(value), type(t
     this->uniqueName = oss.str();
 }
 
+DendrogramNode::~DendrogramNode() { }
+
 InternalNode::InternalNode(DendrogramNode *left, DendrogramNode *right) : DendrogramNode(NODE_INTERNAL), left(left), right(right), lastPermutation(PERMUTE_NONE), probability(0.0f), needsUpdate(true)
 {
     left->parent = this;
@@ -33,6 +35,8 @@ InternalNode::InternalNode(InternalNode *copy)
     this->internalIndex = copy->internalIndex;
     this->uniqueName = copy->uniqueName;
 }
+
+InternalNode::~InternalNode() { }
 
 Permutation InternalNode::chooseRandomPermutation()
 {
@@ -198,6 +202,7 @@ std::set<Node>InternalNode::getChildren()
 }
 
 LeafNode::LeafNode(Node value) : DendrogramNode(NODE_LEAF, value) { }
+LeafNode::~LeafNode() { }
 
 std::set<Node>LeafNode::getChildren()
 {

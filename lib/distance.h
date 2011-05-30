@@ -1,3 +1,6 @@
+#ifndef __DISTANCE_H__
+#define __DISTANCE_H__
+
 #include <math.h>
 #include <map>
 #include "corpus.h"
@@ -17,3 +20,5 @@ protected:
   MagnitudeMap magnitude;
   WordVectorMap wordVector;
 };
+
+#endif

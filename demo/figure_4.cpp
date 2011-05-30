@@ -14,7 +14,7 @@ int main(int argc, const char **argv)
     
     int iterations = atoi(argv[2]);
     
-    int printEveryN = 250;
+    int printEveryN = 100;
     
     srand(time(0));
     

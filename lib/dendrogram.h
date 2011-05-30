@@ -23,7 +23,7 @@ public:
     std::set<InternalNode *> modified;
     NodeList nodes;
     
-	Dendrogram(Graph *graph);
+    Dendrogram(Graph *graph);
     Dendrogram(Dendrogram *dendrogram);
     bool sample();
     double likelihood();
