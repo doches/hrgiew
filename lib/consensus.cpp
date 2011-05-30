@@ -25,6 +25,8 @@ ConsensusNode::ConsensusNode()
     this->type = NODE_INTERNAL;
 }
 
+ConsensusNode::~ConsensusNode() { }
+
 std::string ConsensusNode::toString(Corpus *corpus)
 {
     std::string str = "(";
@@ -63,6 +65,8 @@ ConsensusLeaf::ConsensusLeaf(Node value) : ConsensusNode()
     this->value = value;
     this->type = NODE_LEAF;
 }
+
+ConsensusLeaf::~ConsensusLeaf() { }
 
 std::string ConsensusLeaf::toString(Corpus *corpus)
 {

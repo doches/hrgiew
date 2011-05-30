@@ -26,6 +26,7 @@ public:
     bool subtreeContains(Node value);
     ConsensusNode();
     ConsensusNode(std::set<ConsensusNode *> children);
+    virtual ~ConsensusNode();
     virtual std::string toString(Corpus *corpus=NULL);
 };
 
@@ -35,6 +36,7 @@ public:
     Node value;
     
     ConsensusLeaf(Node value);
+    virtual ~ConsensusLeaf();
     std::string toString(Corpus *corpus=NULL);
 };
 
