@@ -3,9 +3,9 @@
 CC = g++
 
 # -finstrument-functions -lSaturn -m32 #Saturn profiler on OS X
-DEBUG_FLAGS = -g
+DEBUG_FLAGS = 
 
-OPTIMIZATION_FLAGS = 
+OPTIMIZATION_FLAGS = -O3
 
 UNAME := $(shell uname)
 ifeq ($(UNAME),Linux)

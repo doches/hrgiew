@@ -4,8 +4,8 @@
 #include <iostream>
 #include <sstream>
 
-static int __DendrogramNode_index = 0;
-static void DendrogramNode_index_reset() { __DendrogramNode_index = 0; }
+static int __DendrogramNode_index;
+//static void DendrogramNode_index_reset() { __DendrogramNode_index = 0; }
 
 DendrogramNode::DendrogramNode(NodeType type, Node value) : value(value), type(type), parent(NULL)
 {
