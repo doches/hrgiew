@@ -105,6 +105,7 @@ Dendrogram::Dendrogram(Graph *graph, const char *filename) : graph(graph)
                 unsigned int value = (unsigned int)atoi(id);
                 
                 LeafNode *leaf = new LeafNode(value);
+                leaves.insert(leaf);
                 
                 nodeMap[strtol(ptr,NULL,16)] = leaf;
             } else {
@@ -128,6 +129,7 @@ Dendrogram::Dendrogram(Graph *graph, const char *filename) : graph(graph)
                 InternalNode *node = new InternalNode(NULL,NULL);
                 node->probability = probability;
                 node->needsUpdate = true;
+                nodes.push_back(node);
                 
                 nodeMap[strtol(ptr,NULL,16)] = node;
                 
@@ -148,10 +150,6 @@ Dendrogram::Dendrogram(Graph *graph, const char *filename) : graph(graph)
         node->setLeft(nodeMap[lr_keys.first]);
         node->setRight(nodeMap[lr_keys.second]);
     }
-    
-    std::cout << "DONE" << std::endl;
-    
-    this->print();
 }
 
 Dendrogram::Dendrogram(Graph *graph) : graph(graph)

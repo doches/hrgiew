@@ -88,6 +88,12 @@ hierize: $(LIB_OBJ) $(VENDOR_OBJ) demo/hierize.cpp
 resample: $(LIB_OBJ) $(VENDOR_OBJ) demo/resample.cpp
 	$(CC) $(CFLAGS) demo/resample.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o resample
 
+consensus: $(LIB_OBJ) $(VENDOR_OBJ) demo/consensus.cpp
+	$(CC) $(CFLAGS) demo/consensus.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o consensus
+
+dendrify: $(LIB_OBJ) $(VENDOR_OBJ) demo/dendrify.cpp
+	$(CC) $(CFLAGS) demo/dendrify.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o dendrify
+
 .PHONY: clean all debug demo doc 
 
 debug:
@@ -107,4 +113,5 @@ clean:
 	rm -f *~
 
 doc:
+	dot -Tpng demo/system.dot -o doc/html/system.png
 	doxygen Doxyfile
