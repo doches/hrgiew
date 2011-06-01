@@ -62,7 +62,7 @@ dendrogram.o: lib/dendrogram.h lib/dendrogram.cpp graph.o dendrogram_node.o
 dendrogram_node.o: lib/dendrogram_node.h lib/dendrogram_node.cpp graph.o
 	$(CC) -c $(CFLAGS) lib/dendrogram_node.cpp
 
-demo: figure_4 figure_5 ${VENDOR_OBJ}
+demo: ${VENDOR_OBJ} ${DEMO_BIN}
 
 figure_4: $(LIB_OBJ) ${VENDOR_OBJ} demo/figure_4.cpp
 	$(CC) $(CFLAGS) demo/figure_4.cpp ${LIB_OBJ} ${VENDOR_OBJ} -o figure_4
@@ -111,7 +111,10 @@ clean:
 	rm -f $(EXECUTABLES)
 	rm -f **/*~
 	rm -f *~
+	rm -rf *.dSYM
+	rm corpus.length
 
 doc:
+	mkdir -p doc/html/
 	dot -Tpng demo/system.dot -o doc/html/system.png
 	doxygen Doxyfile

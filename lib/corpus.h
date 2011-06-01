@@ -11,6 +11,15 @@ typedef std::vector<unsigned int> Document;
 
 typedef unsigned int Word;
 
+/**
+ @brief C++ re-implementation of the old C target_corpus class. 
+ 
+ Reads a target corpus of the form:
+ \verbatim
+target word word word word word ...
+...
+\endverbatim
+ **/
 class Corpus
 {
 protected:
