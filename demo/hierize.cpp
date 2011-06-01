@@ -57,6 +57,8 @@ int main(int argc, const char **argv)
         usage();
     }
     
+    srand(time(0));
+    
     filenameHandle = makeFilenameHandle(argv[1]);
     outputDirectory = string(argv[2]);
     saveInterval = atoi(argv[3]);
@@ -92,7 +94,7 @@ void save()
         ostringstream dendrogramFilename;
         dendrogramFilename << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".dendrogram";
         ofstream dendrogramOut(dendrogramFilename.str().c_str());
-        dendrogramOut << dendrogram->toString(targetCorpus) << endl;
+        dendrogramOut << dendrogram->toString() << endl;
         dendrogramOut.close();
         
         // Save dot
@@ -117,7 +119,7 @@ void eachDocument(Word target, Document document, bool isNewTarget)
     
     documentIndex++;
     
-    if (documentIndex % saveInterval == 0 && documentIndex) {
+    if (documentIndex % saveInterval == 0) {
     	save();
     }
     

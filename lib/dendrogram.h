@@ -10,6 +10,19 @@
 
 typedef std::vector<InternalNode *> NodeList;
 
+/// @brief Hackish structure used while loading a dendrogram from a graph + file
+///
+/// Don't use elsewhere!
+typedef struct __DendrogramLoaderNode_t
+{
+    bool internal;
+    
+    Node value;
+
+    DendrogramNode *left;
+    DendrogramNode *right;
+} DendrogramLoaderNode;
+
 class Dendrogram
 {
 protected:
@@ -25,6 +38,7 @@ public:
     
     Dendrogram(Graph *graph);
     Dendrogram(Dendrogram *dendrogram);
+    Dendrogram(Graph *graph, const char *filename);
     bool sample();
     double likelihood();
     DendrogramNode *getRoot();

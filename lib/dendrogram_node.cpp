@@ -19,8 +19,12 @@ DendrogramNode::~DendrogramNode() { }
 
 InternalNode::InternalNode(DendrogramNode *left, DendrogramNode *right) : DendrogramNode(NODE_INTERNAL), left(left), right(right), lastPermutation(PERMUTE_NONE), probability(0.0f), needsUpdate(true)
 {
-    left->parent = this;
-    right->parent = this;
+    if (left != NULL) {
+        left->parent = this;
+    }
+    if (right != NULL) {
+        right->parent = this;
+    }
 }
 
 InternalNode::InternalNode(InternalNode *copy)

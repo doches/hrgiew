@@ -3,9 +3,9 @@
 CC = g++
 
 # -finstrument-functions -lSaturn -m32 #Saturn profiler on OS X
-DEBUG_FLAGS = 
+DEBUG_FLAGS = -g
 
-OPTIMIZATION_FLAGS = -O3
+OPTIMIZATION_FLAGS = 
 
 UNAME := $(shell uname)
 ifeq ($(UNAME),Linux)
@@ -84,6 +84,9 @@ distance.o: lib/distance.h lib/distance.cpp lib/corpus.h lib/graph.h
 
 hierize: $(LIB_OBJ) $(VENDOR_OBJ) demo/hierize.cpp
 	$(CC) $(CFLAGS) demo/hierize.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o hierize
+
+resample: $(LIB_OBJ) $(VENDOR_OBJ) demo/resample.cpp
+	$(CC) $(CFLAGS) demo/resample.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o resample
 
 .PHONY: clean all debug demo doc 
 
