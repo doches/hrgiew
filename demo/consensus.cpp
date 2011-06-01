@@ -1,6 +1,6 @@
 #define DESCRIPTION "Read a saved graph and dendrogram (in pointer format), resample, and infer a consensus hierarchy"
-#define USAGE       "consensus file.graph file.dendrogram sampleSpread sampleCount"
-#define NUM_ARGS    4
+#define USAGE       "consensus file.graph file.dendrogram sampleSpread sampleCount outputPrefix"
+#define NUM_ARGS    5
 
 #include "graph.h"
 #include "distance.h"
@@ -38,6 +38,7 @@ int main(int argc, char **argv)
     int sampleSpread = atoi(argv[3]);
     int sampleCount = atoi(argv[4]);
     int sampleEvery = sampleSpread / sampleCount;
+    const char *outputPrefix = argv[5];
     
     DendrogramSet samples;
 
@@ -53,5 +54,23 @@ int main(int argc, char **argv)
     
     Consensus *consensus = new Consensus(samples,graph);
     
+    // Print to console
     cout << consensus->toString() << endl;
+    
+    // Save (in various forms) to disk
+    char filename[80];
+    sprintf(filename,"%s.consensus.txt",outputPrefix);
+    ofstream stringFile(filename);
+    stringFile << consensus->toString() << endl;
+    stringFile.close();
+    
+    sprintf(filename,"%s.consensus.dot",outputPrefix);
+    ofstream dotFile(filename);
+    dotFile << consensus->toDot() << endl;
+    dotFile.close();
+    
+    sprintf(filename,"%s.consensus.matrix",outputPrefix);
+    ofstream matrixFile(filename);
+    matrixFile << consensus->toMatrix() << endl;
+    matrixFile.close();
 }
