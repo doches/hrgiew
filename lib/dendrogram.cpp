@@ -9,6 +9,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <algorithm>
+#include <cstring>
 
 Dendrogram::Dendrogram(Dendrogram *other)
 {
