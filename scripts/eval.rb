@@ -1,4 +1,7 @@
+#!/usr/bin/env ruby
 # Takes two matrices and computes a score for how similar they are.
+#
+# Usage: eval path/to/candidate.matrix path/to/gold.matrix
 
 def file_to_matrix(filename)
     matrix = {}
