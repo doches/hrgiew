@@ -33,8 +33,6 @@ IO.foreach(wordmap_path) do |line|
 	@wordmap[index] = word if @wordmap[index].nil?
 end
 
-p @wordmap
-
 Dir.glob("#{prefix}*").each do |file|
 	txt = process(file)
 	if not txt.nil?
