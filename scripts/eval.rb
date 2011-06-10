@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
-# Takes two matrices and computes a score for how similar they are.
-#
-# Usage: eval path/to/candidate.matrix path/to/gold.matrix
+if not ARGV.size == 2
+    STDERR.puts "Takes two matrices and computes a score for how similar they are."
+    STDERR.puts ""
+    STDERR.puts "Usage: #{$0} path/to/candidate.matrix path/to/gold.matrix"
+    exit(1)
+end
 
 def file_to_matrix(filename)
     matrix = {}
@@ -34,6 +37,8 @@ c_keys = candidate.keys.sort
 c_keys.each_with_index do |i,i_index|
     c_keys[0..i_index-1].each do |j|
         #        puts [i,j].join(" ")
+        p candidate
+        p gold
         scores = [[candidate,gold].map { |x| x[j][i] }].flatten
         puts scores.join("\t") if not scores.reject { |x| x.nil? }.empty?
     end if i_index > 0

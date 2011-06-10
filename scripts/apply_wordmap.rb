@@ -4,6 +4,13 @@
 #
 # Usage: apply_wordmap path/to/wordmap prefix/files
 
+if ARGV.size != 2
+    STDERR.puts "Apply a wordmap to all files with a given prefix"
+    STDERR.puts ""
+    STDERR.puts "Usage: #{$0} path/to/wordmap prefix/files"
+    exit(0)
+end
+
 wordmap_path = ARGV.shift
 prefix = ARGV.shift
 
