@@ -39,7 +39,7 @@ int main(int argc, char **argv)
     unsigned int sampleIndex = 0;
     Dendrogram *best = NULL;
     double bestLikelihood = 0.0f;
-    unsigned int bestIndex;
+    unsigned int bestIndex = 0;
     bool saved = false;
     char logFilename[80];
     sprintf(logFilename,"%s/resample.log",outputDir.c_str());
