@@ -37,8 +37,6 @@ c_keys = candidate.keys.sort
 c_keys.each_with_index do |i,i_index|
     c_keys[0..i_index-1].each do |j|
         #        puts [i,j].join(" ")
-        p candidate
-        p gold
         scores = [[candidate,gold].map { |x| x[j][i] }].flatten
         puts scores.join("\t") if not scores.reject { |x| x.nil? }.empty?
     end if i_index > 0

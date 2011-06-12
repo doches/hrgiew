@@ -4,6 +4,13 @@
 #
 # Usage: render path/to/dir/
 
+if ARGV.size != 1
+    STDERR.puts "Render all dotfiles in a directory"
+    STDERR.puts ""
+    STDERR.puts "Usage: #{$0} directory/"
+    exit(0)
+end
+
 path = ARGV.shift
 Dir.foreach(path) do |file|
 	if file =~ /dot$/
