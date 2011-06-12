@@ -241,8 +241,11 @@ std::string Consensus::toMatrix(Corpus *corpus)
     
     for (std::set<ConsensusLeaf *>::iterator a=leaves.begin(); a!=leaves.end(); a++) {
         if (corpus != NULL) {
-            oss << corpus->indexToString((*a)->value) << ":\t";
+            oss << corpus->indexToString((*a)->value);
+        } else {
+            oss << (*a)->value;
         }
+        oss << ":\t";
         for (std::set<ConsensusLeaf *>::iterator b=leaves.begin(); b!=leaves.end(); b++) {
             oss << verticesBetween((*a)->value,(*b)->value) << "\t";
         }
