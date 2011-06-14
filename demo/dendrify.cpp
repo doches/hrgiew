@@ -31,6 +31,8 @@ int main(int argc, char **argv)
     
     Graph *graph = new Graph(argv[1]);
     Dendrogram *dendrogram = new Dendrogram(graph);
+    dendrogram->sample();
     
     cout << dendrogram->toString() << endl;
 }
+
