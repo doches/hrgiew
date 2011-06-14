@@ -5,8 +5,6 @@
 #ifndef __GRAPH_H__
 #define __GRAPH_H__
 
-//typedef std::string Node;
-//typedef std::pair<std::string, std::string> Key;
 typedef unsigned int Node;
 typedef std::pair<unsigned int, unsigned int> Key;
 
