@@ -3,9 +3,9 @@
 CC = g++
 
 # -finstrument-functions -lSaturn -m32 #Saturn profiler on OS X
-DEBUG_FLAGS = -g
+DEBUG_FLAGS = 
 
-OPTIMIZATION_FLAGS = 
+OPTIMIZATION_FLAGS = -O3
 
 UNAME := $(shell uname)
 ifeq ($(UNAME),Linux)
@@ -93,6 +93,9 @@ consensus: $(LIB_OBJ) $(VENDOR_OBJ) demo/consensus.cpp
 
 dendrify: $(LIB_OBJ) $(VENDOR_OBJ) demo/dendrify.cpp
 	$(CC) $(CFLAGS) demo/dendrify.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o dendrify
+
+dendrogram2dot: $(LIB_OBJ) $(VENDOR_OBJ) demo/dendrogram2dot.cpp
+	$(CC) $(CFLAGS) demo/dendrogram2dot.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o dendrogram2dot
 
 .PHONY: clean all debug demo doc 
 
