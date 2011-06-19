@@ -1,6 +1,6 @@
 #define DESCRIPTION "Read a saved graph and dendrogram (in pointer format) and resample forever"
-#define USAGE       "resample file.graph file.dendrogram output/dir printEvery"
-#define NUM_ARGS    4
+#define USAGE       "resample file.graph file.dendrogram output/dir prefix printEvery [sampleCount]"
+#define NUM_ARGS    5
 
 #include "graph.h"
 #include "distance.h"
@@ -25,7 +25,7 @@ void usage()
 
 int main(int argc, char **argv)
 {
-    if (argc != NUM_ARGS+1) {
+    if (argc < NUM_ARGS+1) {
         usage();
     }
     
@@ -34,7 +34,12 @@ int main(int argc, char **argv)
     Graph *graph = new Graph(argv[1]);
     Dendrogram *dendrogram = new Dendrogram(graph,argv[2]);
     string outputDir = string(argv[3]);
-    int printEvery = atoi(argv[4]);
+    string prefix = string(argv[4]);
+    int printEvery = atoi(argv[5]);
+    int sampleCount = -1;
+    if (argc == 7) {
+      sampleCount = atoi(argv[6]);
+    }
     
     unsigned int sampleIndex = 0;
     Dendrogram *best = NULL;
@@ -62,14 +67,27 @@ int main(int argc, char **argv)
             logFile.flush();
             
             if (!saved) {
-                char filename[80];
-                sprintf(filename,"%s/best.%u.%f.dendrogram",outputDir.c_str(),bestIndex,bestLikelihood);
+                std::string toStr = best->toString();
                 
+                char filename[80];
+                sprintf(filename,"%s/%s.%u.%f.dendrogram",outputDir.c_str(),prefix.c_str(),bestIndex,bestLikelihood);
                 ofstream fout(filename);
-                fout << best->toString();
+                fout << toStr;
                 fout.close();
+                
+                sprintf(filename,"%s/%s.dendrogram",outputDir.c_str(),prefix.c_str());
+                ofstream fout_best(filename);
+                fout_best << toStr;
+                fout_best.close();
+                
                 saved = true;
             }
         }
+        
+        // Terminate if A) we were given a sample count and B) we've exceeded it
+        if (sampleCount != -1 && (int)sampleIndex >= sampleCount) {
+          break;
+        }
     }
+    logFile.close();
 }
