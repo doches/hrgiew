@@ -2,6 +2,7 @@
 #include "dendrogram.h"
 #include "logger.h"
 #include <set>
+#include <list>
 #include <cmath>
 #include <map>
 #include <iostream>
@@ -154,21 +155,24 @@ Dendrogram::Dendrogram(Graph *graph, const char *filename) : graph(graph)
 
 Dendrogram::Dendrogram(Graph *graph) : graph(graph)
 {
-    std::set<DendrogramNode *>nodesBuild;
+    std::list<DendrogramNode *>nodesBuild;
     
     // Initialize builder set to contain leaf nodes.
     for (std::set<Node>::iterator iter = graph->nodes.begin(); iter != graph->nodes.end(); iter++) {
         LeafNode *leaf = new LeafNode(*iter);
-        nodesBuild.insert(leaf);
+        nodesBuild.push_back(leaf);
         leaves.insert(leaf);
     }
     
     // Incrementally pair up nodes in the builder set, until there's only one left (the root).
     while (nodesBuild.size() > 1) {
-        InternalNode *parent = new InternalNode(*(nodesBuild.begin()),*(nodesBuild.rbegin()));
-        nodesBuild.erase(parent->getLeft());
-        nodesBuild.erase(parent->getRight());
-        nodesBuild.insert(parent);
+        std::list<DendrogramNode *>::iterator iter = nodesBuild.begin();
+        DendrogramNode *a = *iter;
+        DendrogramNode *b = *(++iter);
+        InternalNode *parent = new InternalNode(a,b);
+        nodesBuild.remove(parent->getLeft());
+        nodesBuild.remove(parent->getRight());
+        nodesBuild.push_back(parent);
         nodes.push_back(parent);
         modified.insert(parent);
     }

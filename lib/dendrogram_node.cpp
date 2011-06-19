@@ -2,6 +2,7 @@
 #include "stdlib.h"
 #include "logger.h"
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 
 static int __DendrogramNode_index;
@@ -158,7 +159,10 @@ std::string InternalNode::toDot(Corpus *corpus)
 {
     std::ostringstream oss;
     
-    oss << "\t" << this->uniqueName << "[label=\"" << this->probability << "\", shape=\"none\"];" << std::endl;
+    char probStr[10];
+    sprintf(probStr,"%1.4f",this->probability);
+    
+    oss << "\t" << this->uniqueName << "[label=\"" << probStr << "\", shape=\"none\"];" << std::endl;
     oss << "\t" << this->uniqueName << " -> " << left->uniqueName << ";" << std::endl;
     oss << "\t" << this->uniqueName << " -> " << right->uniqueName << ";" << std::endl;
     oss << left->toDot(corpus);
