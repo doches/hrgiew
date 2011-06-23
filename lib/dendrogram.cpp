@@ -176,11 +176,13 @@ Dendrogram::Dendrogram(Graph *graph) : graph(graph)
         nodes.push_back(parent);
         modified.insert(parent);
     }
-    
-    this->root = *(nodesBuild.begin());
-    if (this->root==NULL && nodes.size() > 0) {
-        Log::warn("Dendrogram","root is NULL after graph constructor");
-        exit(1);
+    this->root = NULL;
+    if (graph->nodes.size() > 0) {
+        this->root = *(nodesBuild.begin());
+        if (this->root==NULL && nodes.size() > 0) {
+            Log::warn("Dendrogram","root is NULL after graph constructor");
+            exit(1);
+        }
     }
 }
 
