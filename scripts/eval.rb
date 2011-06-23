@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 if not ARGV.size == 2
-    STDERR.puts "Takes two matrices and computes a score for how similar they are."
+    STDERR.puts "Takes two matrices and outputs them side-by-side for piping into `regress`"
     STDERR.puts ""
     STDERR.puts "Usage: #{$0} path/to/candidate.matrix path/to/gold.matrix"
     exit(1)
@@ -31,6 +31,12 @@ end
 
 candidate = file_to_matrix(ARGV.shift)
 gold = file_to_matrix(ARGV.shift)
+
+missing = ((candidate.keys + gold.keys).flatten.uniq - candidate.keys) + ((candidate.keys + gold.keys).flatten.uniq - gold.keys).flatten.uniq
+
+STDERR.puts "Found disjoint keys: #{missing.join(', ')}!" if missing.size > 0
+
+[gold,candidate].each { |l| l.reject! { |k,v| missing.include?(k) } }
 
 c_keys = candidate.keys.sort
 
