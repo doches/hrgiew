@@ -23,7 +23,8 @@ def process(file)
 			@wordmap.each_pair { |index,word| txt.gsub!("\"#{index}\"","\"#{word}\"") if not word.nil? }
 			return txt
 		when "matrix"
-			return nil
+			@wordmap.each_pair { |index,word| txt.gsub!(/^#{index}\:/,"#{word}:") if not word.nil? }
+			return txt
 		when "txt"
 			@wordmap.each_pair { |index,word| txt.gsub!("<#{index}>",word) if not word.nil? }
 			return txt
