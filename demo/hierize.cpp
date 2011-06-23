@@ -51,6 +51,8 @@ void usage()
     exit(1);
 }
 
+void save();
+
 int main(int argc, const char **argv)
 {
     if (argc != NUM_ARGS+1) {
@@ -71,6 +73,7 @@ int main(int argc, const char **argv)
     dendrogram = new Dendrogram(graph);
     corpusProgress = progressbar_new("Processing",targetCorpus->size());
     targetCorpus->eachDocument(&eachDocument);
+    save();
     progressbar_finish(corpusProgress);
 }
 
