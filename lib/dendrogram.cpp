@@ -287,7 +287,8 @@ void Dendrogram::addLeaf(Node leaf, Node hint)
     }
     
     // Find the candidate's parent
-    InternalNode *parent = findParent(hint,(InternalNode *)root);
+//    InternalNode *parent = findParent(hint,(InternalNode *)root);
+    InternalNode *parent = findRandomParent((InternalNode *)root);
     
     // Add in the new node
     InternalNode *subparent;
@@ -303,6 +304,27 @@ void Dendrogram::addLeaf(Node leaf, Node hint)
     nodes.push_back(subparent);
     modified.insert(parent);
     modified.insert(subparent);
+}
+
+InternalNode *Dendrogram::findRandomParent(InternalNode *subtree)
+{
+    if (subtree->getLeft() == NULL || subtree->getRight() == NULL || rand()%100 < 25) {
+        return subtree;
+    }
+    
+    if (rand()%100 < 50) {
+        if (subtree->getLeft()->type == NODE_INTERNAL) {
+            return (InternalNode *)subtree->getLeft();
+        } else {
+            return subtree;
+        }
+    }
+    
+    if (subtree->getRight()->type == NODE_INTERNAL) {
+        return (InternalNode *)subtree->getRight();
+    } else {
+        return subtree;
+    }
 }
 
 InternalNode *Dendrogram::findParent(Node node, InternalNode *subtree)
