@@ -28,6 +28,10 @@ def process(file)
 		when "txt"
 			@wordmap.each_pair { |index,word| txt.gsub!("<#{index}>",word) if not word.nil? }
 			return txt
+		when "graph"
+			@wordmap.each_pair { |index,word| txt.gsub!(/^#{index}\t/,"#{word}\t") if not word.nil? }
+			@wordmap.each_pair { |index,word| txt.gsub!(/\t#{index}\t/,"\t#{word}\t") if not word.nil? }
+			return txt
 		else
 			STDERR.puts "Unrecognised file extension \"#{ext}\""
 			return nil

@@ -18,6 +18,7 @@ protected:
     std::set<LeafNode *>leaves;
     void updateProbabilities();
     InternalNode *findParent(Node node, InternalNode *subtree);
+    InternalNode *findRandomParent(InternalNode *subtree);
     void validateCopy(DendrogramNode *node);
 public:
     std::set<InternalNode *> modified;
