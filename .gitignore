@@ -14,3 +14,13 @@ learner
 tests
 gprof*
 gmon*
+*.dendrogram
+*.log
+*.wordmap
+*.graph
+*.matrix
+*.txt
+data/*
+*.gprof
+*.score
+.corpus.length
