@@ -24,3 +24,9 @@ data/*
 *.gprof
 *.score
 .corpus.length
+hierize
+dendrify
+dendrogram2dot
+consensus
+graphify
+resample
