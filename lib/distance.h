@@ -10,6 +10,8 @@
 typedef std::map<Word, unsigned int> WordVector;
 typedef std::map<Word, WordVector *> WordVectorMap;
 typedef std::map<Word, double> MagnitudeMap;
+typedef std::map<Word, double> PMIVector;
+typedef std::map<Word, PMIVector *> PMIVectorMap;
 
 class Distance
 {
@@ -17,8 +19,11 @@ public:
   Distance();
   void updateGraph(Word target, Document document, Graph *graph);
 protected:
-  MagnitudeMap magnitude;
-  WordVectorMap wordVector;
+    MagnitudeMap magnitude;
+    WordVectorMap wordVector;
+    WordVector wordCounts;
+    PMIVectorMap pmiVectors;
+    unsigned int totalCounts;
 };
 
 #endif
