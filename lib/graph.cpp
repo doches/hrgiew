@@ -1,4 +1,5 @@
 #include "graph.h"
+#include <math.h>
 #include "logger.h"
 #include <fstream>
 #include <iostream>
@@ -31,10 +32,13 @@ Graph::Graph()
 
 std::string Graph::toString()
 {
+    const double epsilon = 0.00001f;
     std::ostringstream str;
     for (std::map<Key, Edge *>::iterator iterator=edges.begin(); iterator!=edges.end(); iterator++) {
         if (iterator->second != NULL) { // WTF, Holmes...
-            str << iterator->first.first << "\t" << iterator->first.second << "\t" << iterator->second->weight << std::endl;
+            if (fabs(iterator->second->weight-epsilon) > epsilon) {
+                str << iterator->first.first << "\t" << iterator->first.second << "\t" << iterator->second->weight << std::endl;
+            } 
         }
     }
     
