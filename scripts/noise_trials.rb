@@ -9,7 +9,7 @@ cPerLine = [1,5,10]
 cPostSamples = [1000,2000,4000,8000,16000]
 allEquilSamples = 2000
 equilCount = 25
-rootpath = "noise_trials"
+rootpath = ARGV.empty? ? "noise_trials" : ARGV.shift
 saveInterval = 500
 
 sizes.each do |size|
@@ -34,6 +34,9 @@ sizes.each do |size|
       STDERR.puts "Building dendrogram..."
       final = "#{handle.split("/").pop}.#{size}"
       `./hierize #{handle} #{dirpath} #{saveInterval} #{perLine}` if not File.exists?(File.join(dirpath,"#{final}.dendrogram"))
+      
+      STDERR.puts "Applying graph wordmaps..."
+      `./scripts/apply_relevant_wordmaps.rb #{dirpath}`
       
       cPostSamples.each do |postSamples|
         STDERR.puts "\n\t#{postSamples} post-training resamples"
@@ -63,3 +66,4 @@ sizes.each do |size|
     end
   end
 end
+
