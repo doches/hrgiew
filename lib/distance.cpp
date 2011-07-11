@@ -68,8 +68,8 @@ void Distance::updateGraph(Word target, Document document, Graph *graph)
         unsigned int count_x = wordCounts[target];
         unsigned int count_total = totalCounts;
         
-        double p_x = -log((double)count_x / count_total);
-        double p_y = -log((double)count_y / count_total);
+//        double p_x = -log((double)count_x / count_total);
+//        double p_y = -log((double)count_y / count_total);
         
         // Avoid divide-by-zero problems by assuming PMI is zero for
         // anything with a zero count.

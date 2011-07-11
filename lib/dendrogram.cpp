@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <string.h>
+#include <cstring>
 
 Dendrogram::Dendrogram(Dendrogram *other)
 {

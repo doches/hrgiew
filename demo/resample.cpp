@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     }
     
     srand(time(0));
-
+    
     Graph *graph = new Graph(argv[1]);
     Dendrogram *dendrogram = new Dendrogram(graph,argv[2]);
     string outputDir = string(argv[3]);
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     int printEvery = atoi(argv[5]);
     int sampleCount = -1;
     if (argc == 7) {
-      sampleCount = atoi(argv[6]);
+        sampleCount = atoi(argv[6]);
     }
     
     unsigned int sampleIndex = 0;
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
         
         // Terminate if A) we were given a sample count and B) we've exceeded it
         if (sampleCount != -1 && (int)sampleIndex >= sampleCount) {
-          break;
+            break;
         }
     }
     logFile.close();
