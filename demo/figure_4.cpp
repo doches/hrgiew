@@ -39,7 +39,6 @@ int main(int argc, const char **argv)
             std::ofstream fout(filename);
             fout << bestDendrogram->toDot() << std::endl;
             fout.close();
-//            printf("New best: %f\n",bestLikelihood);
         }
     }
     progressbar_finish(progress);

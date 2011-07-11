@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     const char *outputPrefix = argv[5];
     
     DendrogramSet samples;
-
+    
     for (int sampleIndex = 0; sampleIndex < sampleSpread; sampleIndex++) {
         dendrogram->sample();
         

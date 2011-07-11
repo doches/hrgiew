@@ -79,33 +79,33 @@ int main(int argc, const char **argv)
 
 void save()
 {
-        // Save graph
-        ostringstream oss;
-        oss << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".graph";
-        ofstream fout(oss.str().c_str());
-        fout << graph->toString() << endl;
-        fout.close();
-        
-        // Save wordmap
-        ostringstream wordmapFilename;
-        wordmapFilename << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".wordmap";
-        ofstream wordmapOut(wordmapFilename.str().c_str());
-        wordmapOut << targetCorpus->wordmapToString() << endl;
-        wordmapOut.close();
-        
-        // Save dendrogram
-        ostringstream dendrogramFilename;
-        dendrogramFilename << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".dendrogram";
-        ofstream dendrogramOut(dendrogramFilename.str().c_str());
-        dendrogramOut << dendrogram->toString() << endl;
-        dendrogramOut.close();
-        
-        // Save dot
-        ostringstream dotFilename;
-        dotFilename << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".dot";
-        ofstream dotOut(dotFilename.str().c_str());
-        dotOut << dendrogram->toDot(targetCorpus) << endl;
-        dotOut.close();
+    // Save graph
+    ostringstream oss;
+    oss << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".graph";
+    ofstream fout(oss.str().c_str());
+    fout << graph->toString() << endl;
+    fout.close();
+    
+    // Save wordmap
+    ostringstream wordmapFilename;
+    wordmapFilename << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".wordmap";
+    ofstream wordmapOut(wordmapFilename.str().c_str());
+    wordmapOut << targetCorpus->wordmapToString() << endl;
+    wordmapOut.close();
+    
+    // Save dendrogram
+    ostringstream dendrogramFilename;
+    dendrogramFilename << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".dendrogram";
+    ofstream dendrogramOut(dendrogramFilename.str().c_str());
+    dendrogramOut << dendrogram->toString() << endl;
+    dendrogramOut.close();
+    
+    // Save dot
+    ostringstream dotFilename;
+    dotFilename << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".dot";
+    ofstream dotOut(dotFilename.str().c_str());
+    dotOut << dendrogram->toDot(targetCorpus) << endl;
+    dotOut.close();
 }
 
 void eachDocument(Word target, Document document, bool isNewTarget)
@@ -118,7 +118,7 @@ void eachDocument(Word target, Document document, bool isNewTarget)
     
     for(int i=0;i<samplesPerUpdate;i++) {
 	    dendrogram->sample();
-	  }
+    }
     
     documentIndex++;
     
