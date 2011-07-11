@@ -10,6 +10,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <algorithm>
+#include <string.h>
 
 Dendrogram::Dendrogram(Dendrogram *other)
 {
