@@ -2,13 +2,17 @@
 #include "dendrogram.h"
 #include "logger.h"
 #include <set>
+#include <list>
 #include <cmath>
 #include <map>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <stdlib.h>
 #include <algorithm>
-	
+#include <string.h>
+#include <cstring>
+
 Dendrogram::Dendrogram(Dendrogram *other)
 {
     this->graph = other->graph;
@@ -63,31 +67,124 @@ void Dendrogram::validateCopy(DendrogramNode *node)
     }
 }
 
+Dendrogram::Dendrogram(Graph *graph, const char *filename) : graph(graph)
+{
+    // 0xF0000000 -> DendrogramNode
+    std::map<long long,DendrogramNode *> nodeMap;
+    // Node value -> LeafNode
+    std::map<Node,LeafNode *> leafNodeMap;
+    
+    // Load graph, converting graph nodes into LeafNodes
+    for (std::set<Node>::iterator iter = graph->nodes.begin(); iter != graph->nodes.end(); iter++) {
+        LeafNode *leaf = new LeafNode(*iter);
+        leaves.insert(leaf);
+        
+        leafNodeMap[leaf->value] = leaf;
+    }
+    
+    // Load dendrogram
+    this->root = NULL;
+    std::ifstream fin(filename, std::ifstream::in);
+    std::map<InternalNode *,std::pair<long long,long long> > fixup;
+    char line[255];
+    while (fin.good()) {
+        fin.getline(line,255);
+        
+        if (strlen(line) > 1) {
+            char *word = strtok(line," ");
+            if (word[strlen(word)-1] == ':') {
+                // Leaf node
+                //
+                // 0x100102fb0: [35]
+                
+                char ptr[15];
+                strcpy(ptr,word);
+                ptr[strlen(ptr)-1] = '\0';
+                
+                char id[10];
+                word = strtok(NULL," ");
+                strcpy(id,word+1);
+                id[strlen(id)-1] = '\0';
+                unsigned int value = (unsigned int)atoi(id);
+                
+                LeafNode *leaf = new LeafNode(value);
+                leaves.insert(leaf);
+                
+                nodeMap[strtol(ptr,NULL,16)] = leaf;
+            } else {
+                // Internal node
+                // 
+                // 0x100101c30 (0.0000000000):	0x100102fb0	0x100102fe0
+                
+                char ptr[15];
+                strcpy(ptr,word);
+                
+                char prob[15];
+                word = strtok(NULL," \t");
+                strcpy(prob,word+1);
+                prob[strlen(prob)-2] = '\0';
+                double probability = atof(prob);
+                
+                char left[15],right[15];
+                strcpy(left,strtok(NULL," \t"));
+                strcpy(right,strtok(NULL," \t\n"));
+                
+                InternalNode *node = new InternalNode(NULL,NULL);
+                node->probability = probability;
+                node->needsUpdate = true;
+                nodes.push_back(node);
+                
+                nodeMap[strtol(ptr,NULL,16)] = node;
+                
+                fixup[node] = std::pair<long long, long long>(strtol(left,NULL,16),strtol(right,NULL,16));
+                
+                // Is this the root?
+                if (root == NULL) {
+                    this->root = node;
+                }
+            }
+        }
+    }
+    
+    for (std::map<InternalNode *,std::pair<long long,long long> >::iterator iter = fixup.begin(); iter != fixup.end(); iter++) {
+        InternalNode *node = (InternalNode *)iter->first;
+        std::pair<long long,long long> lr_keys = iter->second;
+        
+        node->setLeft(nodeMap[lr_keys.first]);
+        node->setRight(nodeMap[lr_keys.second]);
+    }
+}
+
 Dendrogram::Dendrogram(Graph *graph) : graph(graph)
 {
-    std::set<DendrogramNode *>nodesBuild;
+    std::list<DendrogramNode *>nodesBuild;
     
     // Initialize builder set to contain leaf nodes.
     for (std::set<Node>::iterator iter = graph->nodes.begin(); iter != graph->nodes.end(); iter++) {
         LeafNode *leaf = new LeafNode(*iter);
-        nodesBuild.insert(leaf);
+        nodesBuild.push_back(leaf);
         leaves.insert(leaf);
     }
     
     // Incrementally pair up nodes in the builder set, until there's only one left (the root).
     while (nodesBuild.size() > 1) {
-        InternalNode *parent = new InternalNode(*(nodesBuild.begin()),*(nodesBuild.rbegin()));
-        nodesBuild.erase(parent->getLeft());
-        nodesBuild.erase(parent->getRight());
-        nodesBuild.insert(parent);
+        std::list<DendrogramNode *>::iterator iter = nodesBuild.begin();
+        DendrogramNode *a = *iter;
+        DendrogramNode *b = *(++iter);
+        InternalNode *parent = new InternalNode(a,b);
+        nodesBuild.remove(parent->getLeft());
+        nodesBuild.remove(parent->getRight());
+        nodesBuild.push_back(parent);
         nodes.push_back(parent);
         modified.insert(parent);
     }
-    
-    this->root = *(nodesBuild.begin());
-    if (this->root==NULL && nodes.size() > 0) {
-        Log::warn("Dendrogram","root is NULL after graph constructor");
-        exit(1);
+    this->root = NULL;
+    if (graph->nodes.size() > 0) {
+        this->root = *(nodesBuild.begin());
+        if (this->root==NULL && nodes.size() > 0) {
+            Log::warn("Dendrogram","root is NULL after graph constructor");
+            exit(1);
+        }
     }
 }
 
@@ -192,7 +289,8 @@ void Dendrogram::addLeaf(Node leaf, Node hint)
     }
     
     // Find the candidate's parent
-    InternalNode *parent = findParent(hint,(InternalNode *)root);
+//    InternalNode *parent = findParent(hint,(InternalNode *)root);
+    InternalNode *parent = findRandomParent((InternalNode *)root);
     
     // Add in the new node
     InternalNode *subparent;
@@ -208,6 +306,27 @@ void Dendrogram::addLeaf(Node leaf, Node hint)
     nodes.push_back(subparent);
     modified.insert(parent);
     modified.insert(subparent);
+}
+
+InternalNode *Dendrogram::findRandomParent(InternalNode *subtree)
+{
+    if (subtree->getLeft() == NULL || subtree->getRight() == NULL || rand()%100 < 25) {
+        return subtree;
+    }
+    
+    if (rand()%100 < 50) {
+        if (subtree->getLeft()->type == NODE_INTERNAL) {
+            return (InternalNode *)subtree->getLeft();
+        } else {
+            return subtree;
+        }
+    }
+    
+    if (subtree->getRight()->type == NODE_INTERNAL) {
+        return (InternalNode *)subtree->getRight();
+    } else {
+        return subtree;
+    }
 }
 
 InternalNode *Dendrogram::findParent(Node node, InternalNode *subtree)

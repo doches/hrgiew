@@ -21,10 +21,10 @@ Corpus::Corpus(std::string filename)
     path = filename;
     uniqueWords = 0;
     
-    int result = system((std::string("wc -l < \"")+filename+std::string("\" > corpus.length")).c_str());
+    int result = system((std::string("wc -l < \"")+filename+std::string("\" > .corpus.length")).c_str());
     if(!result) {
-	    std::ifstream fin("corpus.length",std::ifstream::in);
-  	  fin >> documentCount;
+	    std::ifstream fin(".corpus.length",std::ifstream::in);
+        fin >> documentCount;
     	fin.close();
     }
 }

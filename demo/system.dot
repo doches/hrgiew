@@ -1,0 +1,19 @@
+digraph {
+    node [shape="none", fontname="Times"];
+    edge [fontname="Courier New", fontcolor="darkorange",style=dotted];
+
+    target_corpus [label="Target Corpus"];
+    network [label="Graph"];
+    dendrogram [label="Dendrogram"];
+    sampled_dendrogram [label="Sampled Dendrogram"];
+    hierarchy [label="Consensus Hierarchy"];
+    
+    target_corpus -> network [label="graphify"];
+    target_corpus -> sampled_dendrogram [label="hierize"];
+    
+    network -> dendrogram [label="dendrify"];
+    dendrogram -> sampled_dendrogram [label="resample"];
+    sampled_dendrogram -> sampled_dendrogram [label="resample"];
+    
+    sampled_dendrogram -> hierarchy [label="consensus"];
+}

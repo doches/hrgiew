@@ -221,11 +221,11 @@ void eachDocument(Word target, Document doc, bool newTarget)
     documentIndex++;
     
     if (documentIndex > 0 && documentIndex % 10 == 0) {
-//        char fname[20];
-//        sprintf(fname,"graph.%d.weights",documentIndex);
-//        std::ofstream fout(fname);
-//        fout << graph->toString();
-//        fout.close();
+        //        char fname[20];
+        //        sprintf(fname,"graph.%d.weights",documentIndex);
+        //        std::ofstream fout(fname);
+        //        fout << graph->toString();
+        //        fout.close();
     }
     
     progressbar_inc(status);

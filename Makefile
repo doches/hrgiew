@@ -62,7 +62,7 @@ dendrogram.o: lib/dendrogram.h lib/dendrogram.cpp graph.o dendrogram_node.o
 dendrogram_node.o: lib/dendrogram_node.h lib/dendrogram_node.cpp graph.o
 	$(CC) -c $(CFLAGS) lib/dendrogram_node.cpp
 
-demo: figure_4 figure_5 ${VENDOR_OBJ}
+demo: ${VENDOR_OBJ} ${DEMO_BIN}
 
 figure_4: $(LIB_OBJ) ${VENDOR_OBJ} demo/figure_4.cpp
 	$(CC) $(CFLAGS) demo/figure_4.cpp ${LIB_OBJ} ${VENDOR_OBJ} -o figure_4
@@ -85,6 +85,18 @@ distance.o: lib/distance.h lib/distance.cpp lib/corpus.h lib/graph.h
 hierize: $(LIB_OBJ) $(VENDOR_OBJ) demo/hierize.cpp
 	$(CC) $(CFLAGS) demo/hierize.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o hierize
 
+resample: $(LIB_OBJ) $(VENDOR_OBJ) demo/resample.cpp
+	$(CC) $(CFLAGS) demo/resample.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o resample
+
+consensus: $(LIB_OBJ) $(VENDOR_OBJ) demo/consensus.cpp
+	$(CC) $(CFLAGS) demo/consensus.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o consensus
+
+dendrify: $(LIB_OBJ) $(VENDOR_OBJ) demo/dendrify.cpp
+	$(CC) $(CFLAGS) demo/dendrify.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o dendrify
+
+dendrogram2dot: $(LIB_OBJ) $(VENDOR_OBJ) demo/dendrogram2dot.cpp
+	$(CC) $(CFLAGS) demo/dendrogram2dot.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o dendrogram2dot
+
 .PHONY: clean all debug demo doc 
 
 debug:
@@ -102,6 +114,10 @@ clean:
 	rm -f $(EXECUTABLES)
 	rm -f **/*~
 	rm -f *~
+	rm -rf *.dSYM
+	rm corpus.length
 
 doc:
+	mkdir -p doc/html/
+	dot -Tpng demo/system.dot -o doc/html/system.png
 	doxygen Doxyfile
