@@ -17,6 +17,7 @@ public:
     double weight;
 
     Edge(Node a, Node b, double weight=1.0);
+    std::string toString();
 };
 
 class Graph
@@ -29,6 +30,7 @@ protected:
 public:
     std::set<Node>nodes;
     std::map<Key, Edge *>edges;
+    double threshold;
 
     Graph(const std::string filename);
     Graph();
