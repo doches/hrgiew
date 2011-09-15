@@ -13,7 +13,7 @@ inline unsigned int __Distance_dot(PMIVector a, PMIVector b)
   
   unsigned int sum = 0;
   for (PMIVector::iterator wordIterator=a.begin(); wordIterator!=a.end(); wordIterator++) {
-    sum += wordIterator->second * b[wordIterator->first];                                
+    sum += (unsigned int)(wordIterator->second * b[wordIterator->first]);
   }
   
   return sum;

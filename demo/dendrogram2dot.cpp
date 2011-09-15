@@ -33,3 +33,4 @@ int main(int argc, char **argv)
     Dendrogram *dendrogram = new Dendrogram(graph, argv[2]);
     cout << dendrogram->toDot() << endl;
 }
+
