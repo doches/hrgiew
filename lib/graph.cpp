@@ -107,6 +107,13 @@ bool Graph::loadFromPairs(const std::string filename)
 
 double Graph::linksBetween(std::set<Node> a, std::set<Node> b)
 {
+    CacheKey key = CacheKey(a,b);
+    
+    std::map<CacheKey,double>::iterator cache = linksCache.find(key);
+    if (cache != linksCache.end()) {
+        return cache->second;
+    }
+
     double linkCount = 0;
 
     for (std::set<Node>::iterator aIter=a.begin(); aIter != a.end(); aIter++) {
@@ -118,6 +125,8 @@ double Graph::linksBetween(std::set<Node> a, std::set<Node> b)
             }
         }
     }
+    
+    linksCache[key] = linkCount;
     
     return linkCount;
 }

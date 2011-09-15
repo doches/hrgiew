@@ -7,6 +7,9 @@
 
 typedef unsigned int Node;
 typedef std::pair<unsigned int, unsigned int> Key;
+typedef std::set<Node> NodeSet;
+
+typedef std::pair<NodeSet,NodeSet> CacheKey;
 
 class Edge
 {
@@ -26,6 +29,9 @@ protected:
     bool loadFromPairs(std::string filename);
     bool loadFromWeights(std::string filename);
     bool valid;
+    
+    
+    std::map<CacheKey,double> linksCache;
 	
 public:
     std::set<Node>nodes;
