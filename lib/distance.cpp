@@ -1,4 +1,6 @@
 #include "distance.h"
+#include <iostream>
+#include <list>
 #include <stdio.h>
 
 // Compute (relatively) fast dot product between WordVectors, where
@@ -21,6 +23,24 @@ inline unsigned int __Distance_dot(PMIVector a, PMIVector b)
 Distance::Distance()
 {
     totalCounts = 0;
+}
+
+// Delete edges below a specified weight threshold.
+void Distance::threshold(Graph *graph, double minKeep)
+{
+    std::list<Key> deleteList;
+    for (std::map<Key, Edge *>::const_iterator mapIter = graph->edges.begin(); mapIter != graph->edges.end(); mapIter++) {
+        Edge *edge = mapIter->second;
+        Key key = mapIter->first;
+        
+        if (edge->weight < minKeep) {
+            deleteList.push_back(mapIter->first);
+        }
+    }
+    
+    for (std::list<Key>::const_iterator deleteIter = deleteList.begin(); deleteIter != deleteList.end(); deleteIter++) {
+        graph->edges.erase(*deleteIter);
+    }
 }
 
 // Update the given graph with a new target word & context.

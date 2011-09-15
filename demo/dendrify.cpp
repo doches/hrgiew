@@ -1,6 +1,6 @@
 #define DESCRIPTION "Read a saved graph and output a naive dendrogram"
-#define USAGE       "dendrify file.graph"
-#define NUM_ARGS    1
+#define USAGE       "dendrify file.graph threshold"
+#define NUM_ARGS    2
 
 #include "graph.h"
 #include "distance.h"
@@ -30,8 +30,11 @@ int main(int argc, char **argv)
     srand(time(0));
     
     Graph *graph = new Graph(argv[1]);
+    graph->threshold = atof(argv[2]);
     Dendrogram *dendrogram = new Dendrogram(graph);
-    dendrogram->sample();
+    for(int i=0;i<10;i++) {
+      dendrogram->sample();
+    }
     
     cout << dendrogram->toString() << endl;
 }

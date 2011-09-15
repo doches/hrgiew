@@ -16,8 +16,9 @@ typedef std::map<Word, PMIVector *> PMIVectorMap;
 class Distance
 {
 public:
-  Distance();
-  void updateGraph(Word target, Document document, Graph *graph);
+    Distance();
+    void updateGraph(Word target, Document document, Graph *graph);
+    void threshold(Graph *graph, double minKeep);
 protected:
     MagnitudeMap magnitude;
     WordVectorMap wordVector;

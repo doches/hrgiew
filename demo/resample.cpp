@@ -1,5 +1,5 @@
 #define DESCRIPTION "Read a saved graph and dendrogram (in pointer format) and resample forever"
-#define USAGE       "resample file.graph file.dendrogram output/dir prefix printEvery [sampleCount]"
+#define USAGE       "resample file.graph file.dendrogram output/dir prefix printEvery [threshold] [sampleCount]"
 #define NUM_ARGS    5
 
 #include "graph.h"
@@ -36,9 +36,14 @@ int main(int argc, char **argv)
     string outputDir = string(argv[3]);
     string prefix = string(argv[4]);
     int printEvery = atoi(argv[5]);
+    double threshold = 0.0f;
+    if (argc >= 7) {
+        threshold = atof(argv[6]);
+        graph->threshold = threshold;
+    }
     int sampleCount = -1;
-    if (argc == 7) {
-        sampleCount = atoi(argv[6]);
+    if (argc >= 8) {
+        sampleCount = atoi(argv[7]);
     }
     
     unsigned int sampleIndex = 0;

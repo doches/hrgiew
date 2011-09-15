@@ -1,7 +1,7 @@
 
 #define DESCRIPTION "Read a target corpus and incrementally build a semantic network of target words."
-#define USAGE       "graphify path/to/corpus.target_corpus soutput/dir save_interval"
-#define NUM_ARGS    3
+#define USAGE       "graphify path/to/corpus.target_corpus soutput/dir [printEvery]"
+#define NUM_ARGS    2
 
 #include "corpus.h"
 #include "graph.h"
@@ -20,7 +20,7 @@ Graph *graph;
 Distance *similarity;
 progressbar *corpusProgress;
 unsigned int documentIndex = 0;
-int saveInterval;
+unsigned int saveEvery = -1;
 
 string filenameHandle;
 string outputDirectory;
@@ -49,15 +49,34 @@ void usage()
     exit(1);
 }
 
+void save()
+{
+    // Save graph
+    ostringstream oss;
+    oss << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".graph";
+    ofstream fout(oss.str().c_str());
+    fout << graph->toString() << endl;
+    fout.close();
+    
+    // Save wordmap
+    ostringstream wordmapFilename;
+    wordmapFilename << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".wordmap";
+    ofstream wordmapOut(wordmapFilename.str().c_str());
+    wordmapOut << targetCorpus->wordmapToString() << endl;
+    wordmapOut.close();
+}
+
 int main(int argc, const char **argv)
 {
-    if (argc != NUM_ARGS+1) {
+    if (argc < NUM_ARGS+1) {
         usage();
     }
     
     filenameHandle = makeFilenameHandle(argv[1]);
     outputDirectory = string(argv[2]);
-    saveInterval = atoi(argv[3]);
+    if (argc > NUM_ARGS+1) {
+    	saveEvery = (unsigned int)atoi(argv[3]);
+    }	
     
     // Process each document (sentence) from the target corpus
     targetCorpus = new Corpus(string(argv[1]));
@@ -65,6 +84,7 @@ int main(int argc, const char **argv)
     similarity = new Distance();
     corpusProgress = progressbar_new("Processing",targetCorpus->size());
     targetCorpus->eachDocument(&eachDocument);
+    save();
     progressbar_finish(corpusProgress);
 }
 
@@ -74,20 +94,8 @@ void eachDocument(Word target, Document document, bool isNewTarget)
     
     documentIndex++;
     
-    if (documentIndex % saveInterval == 0 && documentIndex) {
-        // Save graph
-        ostringstream oss;
-        oss << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".graph";
-        ofstream fout(oss.str().c_str());
-        fout << graph->toString() << endl;
-        fout.close();
-        
-        // Save wordmap
-        ostringstream wordmapFilename;
-        wordmapFilename << outputDirectory << "/" << filenameHandle << "." << documentIndex << ".wordmap";
-        ofstream wordmapOut(wordmapFilename.str().c_str());
-        wordmapOut << targetCorpus->wordmapToString() << endl;
-        wordmapOut.close();
+    if (documentIndex % saveEvery == 0) {
+    	save();
     }
     
     progressbar_inc(corpusProgress);

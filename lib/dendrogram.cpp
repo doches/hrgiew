@@ -44,6 +44,7 @@ Dendrogram::Dendrogram(Dendrogram *other)
     this->root = cloneMap[((InternalNode *)other->root)];
     
     validateCopy(root);
+    this->epsilon = other->epsilon;
 }
 
 void Dendrogram::validateCopy(DendrogramNode *node)
@@ -81,6 +82,8 @@ Dendrogram::Dendrogram(Graph *graph, const char *filename) : graph(graph)
         
         leafNodeMap[leaf->value] = leaf;
     }
+    
+    this->epsilon = 0.0000000000000001f;
     
     // Load dendrogram
     this->root = NULL;
@@ -197,6 +200,10 @@ void Dendrogram::updateProbabilities()
             std::set<Node> leftChildren = node->getLeft()->getChildren();
             std::set<Node> rightChildren = node->getRight()->getChildren();
             node->probability = graph->linksBetween(leftChildren,rightChildren) / (double)(leftChildren.size() * rightChildren.size());
+            // Avoid infinite log probabilities.
+            if (node->probability < this->epsilon) {
+                node->probability = this->epsilon;
+            }
             ((InternalNode *)node)->needsUpdate = false;
         }
     }
@@ -355,11 +362,27 @@ double Dendrogram::likelihood()
         std::set<Node> rightChildren = node->getRight()->getChildren();
         double eNode = (double)(graph->linksBetween(leftChildren,rightChildren));
         
-        double p = pow(node->probability, eNode) * pow(1-node->probability,leftChildren.size()*rightChildren.size() - eNode);
-        product += log(p);
+        double theta = eNode / (leftChildren.size() * rightChildren.size());
+        
+        if (theta >= 1.0) {
+            theta -= epsilon;
+        } else if (theta <= 0.0) {
+            theta += epsilon;
+        }
+        
+        double h = -theta * log(theta) - (1-theta) * log(1-theta);
+        double p = h * leftChildren.size() * rightChildren.size();
+        
+        product += p;
+        
+//        double p = pow(node->probability, eNode) * pow(1-node->probability,leftChildren.size()*rightChildren.size() - eNode);
+//        if (p <= 0.0f) {
+//            std::cout << p << " pow(" << node->probability << ", " << eNode << ") * pow(" << 1-node->probability << ", " << leftChildren.size() << "*" << rightChildren.size() << " - " << eNode << ")" << std::endl;
+//        }
+//        product += log(p);
     }
     
-    return product;
+    return -product;
 }
 
 DendrogramNode *Dendrogram::getRoot()

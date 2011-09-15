@@ -15,6 +15,13 @@ Edge::Edge(Node a, Node b, double weight)
 	this->weight = weight;
 }
 
+std::string Edge::toString()
+{
+    std::ostringstream str;
+    str << this->left << " <- " << this->weight << " -> " << this->right;
+    return str.str();
+}
+
 Graph::Graph(std::string filename)
 {
 	this->valid = false;
@@ -23,11 +30,13 @@ Graph::Graph(std::string filename)
 	} else if (filename.rfind(".weights")!=std::string::npos || filename.rfind(".graph")!=std::string::npos) {
 		this->valid = loadFromWeights(filename);
     }
+    this->threshold = 0.0f;
 }
 
 Graph::Graph()
 {
     this->valid = true;
+    this->threshold = 0.0f;
 }
 
 std::string Graph::toString()
@@ -98,16 +107,26 @@ bool Graph::loadFromPairs(const std::string filename)
 
 double Graph::linksBetween(std::set<Node> a, std::set<Node> b)
 {
+    CacheKey key = CacheKey(a,b);
+    
+    std::map<CacheKey,double>::iterator cache = linksCache.find(key);
+    if (cache != linksCache.end()) {
+        return cache->second;
+    }
+
     double linkCount = 0;
 
     for (std::set<Node>::iterator aIter=a.begin(); aIter != a.end(); aIter++) {
         for (std::set<Node>::iterator bIter=b.begin(); bIter != b.end(); bIter++) {
             Edge *candidate = edges[Key(*aIter,*bIter)];
-            if (candidate != NULL) {
-                linkCount += candidate->weight;
+            if (candidate != NULL && candidate->weight >= threshold) {
+                linkCount += 1;
+                //linkCount += candidate->weight;
             }
         }
     }
+    
+    linksCache[key] = linkCount;
     
     return linkCount;
 }

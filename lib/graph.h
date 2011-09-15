@@ -7,6 +7,9 @@
 
 typedef unsigned int Node;
 typedef std::pair<unsigned int, unsigned int> Key;
+typedef std::set<Node> NodeSet;
+
+typedef std::pair<NodeSet,NodeSet> CacheKey;
 
 class Edge
 {
@@ -17,6 +20,7 @@ public:
     double weight;
 
     Edge(Node a, Node b, double weight=1.0);
+    std::string toString();
 };
 
 class Graph
@@ -25,10 +29,14 @@ protected:
     bool loadFromPairs(std::string filename);
     bool loadFromWeights(std::string filename);
     bool valid;
+    
+    
+    std::map<CacheKey,double> linksCache;
 	
 public:
     std::set<Node>nodes;
     std::map<Key, Edge *>edges;
+    double threshold;
 
     Graph(const std::string filename);
     Graph();

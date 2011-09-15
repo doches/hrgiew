@@ -1,6 +1,6 @@
 #define DESCRIPTION "Read a saved graph and dendrogram (in pointer format), resample, and infer a consensus hierarchy"
-#define USAGE       "consensus file.graph file.dendrogram sampleSpread sampleCount outputPrefix"
-#define NUM_ARGS    5
+#define USAGE       "consensus file.graph file.dendrogram sampleSpread sampleCount outputPrefix threshold"
+#define NUM_ARGS    6
 
 #include "graph.h"
 #include "distance.h"
@@ -39,6 +39,8 @@ int main(int argc, char **argv)
     int sampleCount = atoi(argv[4]);
     int sampleEvery = sampleSpread / sampleCount;
     const char *outputPrefix = argv[5];
+    double threshold = atof(argv[6]);
+    graph->threshold = threshold;
     
     DendrogramSet samples;
     

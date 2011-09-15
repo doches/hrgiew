@@ -23,6 +23,7 @@ protected:
 public:
     std::set<InternalNode *> modified;
     NodeList nodes;
+    double epsilon;
     
     Dendrogram(Graph *graph);
     Dendrogram(Dendrogram *dendrogram);
