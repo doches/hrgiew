@@ -113,7 +113,8 @@ void save(bool isFinal)
 
 void eachDocument(Word target, Document document, bool isNewTarget)
 {
-    similarity->updateGraph(target,document,graph,true);
+    similarity->updateReps(target,document);
+    similarity->updateGraph(target,document,graph);
     
     if (isNewTarget) {
         dendrogram->addLeaf(target);

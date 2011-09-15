@@ -17,9 +17,10 @@ class Distance
 {
 public:
     Distance();
-    void updateGraph(Word target, Document document, Graph *graph, bool representationOnly=false);
+    void updateGraph(Word target, Document document, Graph *graph);
     void threshold(Graph *graph, double minKeep);
-    void updateReps(Word target, Document document, Graph *graph);
+    void updateReps(Word target, Document document);
+    void updateFullGraph(Graph *graph);
 protected:
     MagnitudeMap magnitude;
     WordVectorMap wordVector;
