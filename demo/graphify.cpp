@@ -86,7 +86,7 @@ int main(int argc, const char **argv)
 
 void eachDocument(Word target, Document document, bool isNewTarget)
 {
-    similarity->updateGraph(target,document,graph);
+    similarity->updateGraph(target,document,graph,documentIndex+1 >= targetCorpus->size()-1);
     
     documentIndex++;
     
