@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     }
     int sampleCount = -1;
     if (argc >= 8) {
-        sampleCount = atoi(argv[6]);
+        sampleCount = atoi(argv[7]);
     }
     
     unsigned int sampleIndex = 0;
