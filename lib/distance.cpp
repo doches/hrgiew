@@ -166,3 +166,31 @@ void Distance::updateGraph(Word target, Document document, Graph *graph, bool re
         }
     }
 }
+
+void Distance::updateReps(Word target, Document document, Graph *graph)
+{
+    // Increment the count of how many times we've seen this target word
+    wordCounts[target]++;
+    
+    // Get the map of (context words) -> (counts) for this target word
+    WordVector *targetVector = wordVector[target];
+    // If we don't have that map, this must be the first time we've seen the
+    // target word. 
+    if (targetVector == NULL) {
+        // Create a mew map and save it in the list o' maps.
+        targetVector = new WordVector();
+        wordVector[target] = targetVector;
+    }
+    
+    // For each word in this document context...
+    for(Document::iterator docIter = document.begin(); docIter != document.end(); docIter++) {
+        Word contextWord = *docIter;
+        
+        // ...Increment the count of how many times we've seen it with the target word...
+        (*targetVector)[contextWord]++;
+        // ...and how many times we've seen it overall...
+        wordCounts[contextWord]++;
+        // ...annd how many words we've seen, total.
+        totalCounts++;
+    }
+}

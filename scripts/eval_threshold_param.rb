@@ -39,19 +39,19 @@ ARGV.map { |x| x.to_f }.each do |threshold|
 		end
 		
 		puts "wordmap #{t}"
-		`./apply_wordmap #{corpus}.wordmap #{output_dir}/#{t_h} 2> /dev/null`
+		`/usr/bin/ruby apply_wordmap #{corpus}.wordmap #{output_dir}/#{t_h} 2> /dev/null`
 		
 		correlation = "#{output_dir}/#{t_h}.correlation"
 		if not File.exists?(correlation)
 			puts "score #{t}"
-			score = `./eval #{output_dir}/#{t_h}.consensus.human.matrix subset.gold.matrix | regress`.split("\n").pop.split("\s+").shift.to_f
+			score = `/usr/bin/ruby eval #{output_dir}/#{t_h}.consensus.human.matrix subset.gold.matrix | regress`.split("\n").pop.split("\s+").shift.to_f
 			`echo \"#{score}\" > #{correlation}`
 			scorefile[t] = score
 		end
 	end
 end
 threads.each { |t| t.join }
-puts `./render threshold/`
+puts `/usr/bin/ruby ./render threshold/`
 
 fout = File.open(scorepath,'w')
 fout.puts scorefile.to_yaml

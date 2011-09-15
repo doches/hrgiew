@@ -19,6 +19,7 @@ public:
     Distance();
     void updateGraph(Word target, Document document, Graph *graph, bool representationOnly=false);
     void threshold(Graph *graph, double minKeep);
+    void updateReps(Word target, Document document, Graph *graph);
 protected:
     MagnitudeMap magnitude;
     WordVectorMap wordVector;
