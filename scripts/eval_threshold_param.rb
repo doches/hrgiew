@@ -11,16 +11,18 @@ if handle =~ /\.(graph|wordmap)$/
 	handle = h.join(".")
 end
 
-scorepath = "threshold/scores.yaml"
+dir = File.dirname(handle)
+
+scorepath = "#{dir}/scores.yaml"
 
 scorefile = {}
 scorefile = YAML.load_file(scorepath) if File.exists?(scorepath)
 
 threads = []
 ARGV.map { |x| x.to_f }.each do |threshold|
-	threads << Thread.new(threshold,handle) do |t,corpus|
+	threads << Thread.new(threshold,handle,dir) do |t,corpus,d|
 		t_h = "#{t}".gsub('.','_')
-		output_dir = "threshold"
+		output_dir = d
 		init_dendrogram = "#{corpus}.#{t_h}.init.dendrogram"
 		max_sample = 100000
 		
@@ -44,14 +46,14 @@ ARGV.map { |x| x.to_f }.each do |threshold|
 		correlation = "#{output_dir}/#{t_h}.correlation"
 		if not File.exists?(correlation)
 			puts "score #{t}"
-			score = `/usr/bin/ruby eval #{output_dir}/#{t_h}.consensus.human.matrix subset.gold.matrix | regress`.split("\n").pop.split("\s+").shift.to_f
+			score = `/usr/bin/ruby eval #{output_dir}/#{t_h}.consensus.human.matrix wordnet.matrix | regress`.split("\n").pop.split("\s+").shift.to_f
 			`echo \"#{score}\" > #{correlation}`
 			scorefile[t] = score
 		end
 	end
 end
 threads.each { |t| t.join }
-puts `/usr/bin/ruby ./render threshold/`
+puts `/usr/bin/ruby ./render #{dir}`
 
 fout = File.open(scorepath,'w')
 fout.puts scorefile.to_yaml
