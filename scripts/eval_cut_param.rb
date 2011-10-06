@@ -6,21 +6,25 @@
 @gold = ARGV.shift
 
 def eval(n)
-  `ruby scripts/dot2clusters.rb #{@dotfile} #{n} > cut_#{n}.yaml`
-  score = `clusterval -s -g #{@gold} -c cut_#{n}.yaml`.to_f
-  `rm cut_#{n}.yaml`
-  return score
+	handle = File.basename(@dotfile)
+	tempfile = "cut_#{handle}_#{n}.yaml"
+  `ruby scripts/dot2clusters.rb #{@dotfile} #{n} > #{tempfile}`
+  count = `cat #{tempfile} | grep ':' | wc -l`.to_i
+  score = `clusterval -s -g #{@gold} -c #{tempfile}`.to_f
+  `rm #{tempfile}`
+  return [score,count]
 end
 
 scores = []
 n = 0
 previous = 0
 score = 1
-while score != previous
-  previous = score
+while score[0] != previous
+  previous = score[0]
   
   score = eval(n)
-  puts "#{n}\t#{score}"
+  puts "#{n}\t#{score.join("\t")}"
+  STDERR.puts "#{n}\t#{score.join("\t")}"
   n += 1
   scores.push score
 end
