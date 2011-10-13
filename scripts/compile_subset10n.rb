@@ -13,7 +13,11 @@ Dir.glob(File.join(dir,"*.correlation")).each do |file|
 		trials[param].push score
 	end
 end
+
+best = [0,0]
+
 trials.sort { |a,b| a[0] <=> b[0] }.each do |k,v|
+	v.each { |x| best = [k,x] if x > best[1] }
 	mean = v.inject(0) { |s,x| s += x }/v.size.to_f
 	
 	mean = 0 if mean < 0
@@ -23,3 +27,5 @@ trials.sort { |a,b| a[0] <=> b[0] }.each do |k,v|
 	
 	puts "#{k}\t#{mean}\t#{stddev}"
 end
+
+STDERR.puts "BEST: #{best.join("\t")}"
