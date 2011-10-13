@@ -15,5 +15,9 @@ Dir.glob(File.join(dir,"*.correlation")).each do |file|
 end
 trials.sort { |a,b| a[0] <=> b[0] }.each do |k,v|
 	mean = v.inject(0) { |s,x| s += x }/v.size.to_f
-	puts "#{k}\t#{mean}"
+	
+	# StdDev
+	stddev = (v.inject(0) { |sum,x| sum += (x-mean)**2 } / v.size.to_f)**2
+	
+	puts "#{k}\t#{mean}\t#{stddev}"
 end
