@@ -15,6 +15,7 @@ Dir.glob(File.join(dir,"*.correlation")).each do |file|
 end
 
 best = [0,0]
+best_mean = [0,0]
 
 trials.sort { |a,b| a[0] <=> b[0] }.each do |k,v|
 	v.each { |x| best = [k,x] if x > best[1] }
@@ -22,10 +23,13 @@ trials.sort { |a,b| a[0] <=> b[0] }.each do |k,v|
 	
 	mean = 0 if mean < 0
 	
+	best_mean = [k,mean] if mean > best_mean[1]
+	
 	# StdDev
 	stddev = (v.inject(0) { |sum,x| sum += (x-mean)**2 } / v.size.to_f)**0.5
 	
 	puts "#{k}\t#{mean}\t#{stddev}"
 end
 
-STDERR.puts "BEST: #{best.join("\t")}"
+STDERR.puts "BEST INDV: #{best.join("\t")}"
+STDERR.puts "BEST MEAN: #{best_mean.join("\t")}"
