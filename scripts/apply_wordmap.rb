@@ -4,12 +4,15 @@
 #
 # Usage: apply_wordmap path/to/wordmap prefix/files
 
-if ARGV.size != 2
+if ARGV.size < 2
     STDERR.puts "Apply a wordmap to all files with a given prefix"
     STDERR.puts ""
-    STDERR.puts "Usage: #{$0} path/to/wordmap prefix/files"
+    STDERR.puts "Usage: #{$0} path/to/wordmap prefix/files [-w|--warn]"
     exit(0)
 end
+
+@debug = ARGV.include?("-w") or ARGV.include?("--warn")
+ARGV.reject! { |x| x == "-w" or x == "--warn" }
 
 wordmap_path = ARGV.shift
 prefix = ARGV.shift
@@ -20,20 +23,24 @@ def process(file)
 	txt = IO.readlines(file).join("").strip
 	case ext
 		when "dot"
+			STDERR.puts "#{file} (DOT)"
 			@wordmap.each_pair { |index,word| txt.gsub!("\"#{index}\"","\"#{word}\"") if not word.nil? }
 			return txt
 		when "matrix"
+			STDERR.puts "#{file} (MATRIX)"
 			@wordmap.each_pair { |index,word| txt.gsub!(/^#{index}\:/,"#{word}:") if not word.nil? }
 			return txt
 		when "txt"
+			STDERR.puts "#{file} (TXT)"
 			@wordmap.each_pair { |index,word| txt.gsub!("<#{index}>",word) if not word.nil? }
 			return txt
 		when "graph"
+			STDERR.puts "#{file} (GRAPH)"
 			@wordmap.each_pair { |index,word| txt.gsub!(/^#{index}\t/,"#{word}\t") if not word.nil? }
 			@wordmap.each_pair { |index,word| txt.gsub!(/\t#{index}\t/,"\t#{word}\t") if not word.nil? }
 			return txt
 		else
-			STDERR.puts "Unrecognised file extension \"#{ext}\""
+			STDERR.puts "Unrecognised file extension \"#{ext}\"" if @debug
 			return nil
 	end
 end
