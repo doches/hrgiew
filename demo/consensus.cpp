@@ -62,16 +62,19 @@ int main(int argc, char **argv)
     // Save (in various forms) to disk
     char filename[80];
     sprintf(filename,"%s.consensus.txt",outputPrefix);
+    cerr << filename << endl;
     ofstream stringFile(filename);
     stringFile << consensus->toString() << endl;
     stringFile.close();
     
     sprintf(filename,"%s.consensus.dot",outputPrefix);
+    cerr << filename << endl;
     ofstream dotFile(filename);
     dotFile << consensus->toDot() << endl;
     dotFile.close();
     
     sprintf(filename,"%s.consensus.matrix",outputPrefix);
+    cerr << filename << endl;
     ofstream matrixFile(filename);
     matrixFile << consensus->toMatrix() << endl;
     matrixFile.close();
