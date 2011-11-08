@@ -5,7 +5,7 @@ CC = g++
 # -finstrument-functions -lSaturn -m32 #Saturn profiler on OS X
 DEBUG_FLAGS = 
 
-OPTIMIZATION_FLAGS = -O3
+OPTIMIZATION_FLAGS = -O2
 
 UNAME := $(shell uname)
 ifeq ($(UNAME),Linux)
@@ -112,13 +112,13 @@ debug:
 
 # Clean target
 clean:
-	rm -f *.o
-	rm -rf doc/
-	rm -f $(EXECUTABLES)
-	rm -f **/*~
-	rm -f *~
-	rm -rf *.dSYM
-	rm corpus.length
+	@rm -f *.o
+	@rm -rf doc/
+	@rm -f $(EXECUTABLES)
+	@rm -f **/*~
+	@rm -f *~
+	@rm -rf *.dSYM
+	@rm -f corpus.length
 
 doc:
 	mkdir -p doc/html/

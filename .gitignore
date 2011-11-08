@@ -30,3 +30,15 @@ dendrogram2dot
 consensus
 graphify
 resample
+*.dat
+*.plot
+*.pdf
+*.ps
+*.scores
+*.yaml
+dendrogram2dendrogram
+*.header
+*.regress
+*.gz
+*.bak
+*.orig
