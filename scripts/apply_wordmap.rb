@@ -63,13 +63,15 @@ IO.foreach(wordmap_path) do |line|
 end
 
 Dir.glob("#{prefix}*").each do |file|
-	txt = process(file)
-	if not txt.nil?
-		new_filename = file.split(".").reject { |x| x == "human" }
-		ext = new_filename.pop
-		new_filename = new_filename.push("human").push(ext).join(".")
-		fout = File.open(new_filename,'w')
-		fout.puts txt
-		fout.close
+	new_filename = file.split(".").reject { |x| x == "human" }
+	ext = new_filename.pop
+	new_filename = new_filename.push("human").push(ext).join(".")
+	if not File.exists?(new_filename)
+	  txt = process(file)
+	  if not txt.nil?
+		  fout = File.open(new_filename,'w')
+		  fout.puts txt
+		  fout.close
+		end
 	end
 end
