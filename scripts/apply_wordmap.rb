@@ -4,6 +4,8 @@
 #
 # Usage: apply_wordmap path/to/wordmap prefix/files
 
+require 'progressbar'
+
 if ARGV.size < 2
     STDERR.puts "Apply a wordmap to all files with a given prefix"
     STDERR.puts ""
@@ -24,20 +26,28 @@ def process(file)
 	case ext
 		when "dot"
 			STDERR.puts "#{file} (DOT)"
-			@wordmap.each_pair { |index,word| txt.gsub!("\"#{index}\"","\"#{word}\"") if not word.nil? }
+			progress = ProgressBar.new("Applying",@wordmap.size)
+			@wordmap.each_pair { |index,word| txt.gsub!("\"#{index}\"","\"#{word}\"") if not word.nil?; progress.inc }
+			progress.finish
 			return txt
 		when "matrix"
 			STDERR.puts "#{file} (MATRIX)"
-			@wordmap.each_pair { |index,word| txt.gsub!(/^#{index}\:/,"#{word}:") if not word.nil? }
+			progress = ProgressBar.new("Applying",@wordmap.size)
+			@wordmap.each_pair { |index,word| txt.gsub!(/^#{index}\:/,"#{word}:") if not word.nil?; progress.inc }
+			progress.finish
 			return txt
 		when "txt"
 			STDERR.puts "#{file} (TXT)"
-			@wordmap.each_pair { |index,word| txt.gsub!("<#{index}>",word) if not word.nil? }
+			progress = ProgressBar.new("Applying",@wordmap.size)
+			@wordmap.each_pair { |index,word| txt.gsub!("<#{index}>",word) if not word.nil?; progress.inc }
+			progress.finish
 			return txt
 		when "graph"
 			STDERR.puts "#{file} (GRAPH)"
-			@wordmap.each_pair { |index,word| txt.gsub!(/^#{index}\t/,"#{word}\t") if not word.nil? }
-			@wordmap.each_pair { |index,word| txt.gsub!(/\t#{index}\t/,"\t#{word}\t") if not word.nil? }
+			progress = ProgressBar.new("Applying",@wordmap.size*2)
+			@wordmap.each_pair { |index,word| txt.gsub!(/^#{index}\t/,"#{word}\t") if not word.nil?; progress.inc }
+			@wordmap.each_pair { |index,word| txt.gsub!(/\t#{index}\t/,"\t#{word}\t") if not word.nil?; progress.inc }
+			progress.finish
 			return txt
 		else
 			STDERR.puts "Unrecognised file extension \"#{ext}\"" if @debug
