@@ -96,6 +96,9 @@ dendrify: $(LIB_OBJ) $(VENDOR_OBJ) demo/dendrify.cpp
 
 dendrogram2dot: $(LIB_OBJ) $(VENDOR_OBJ) demo/dendrogram2dot.cpp
 	$(CC) $(CFLAGS) demo/dendrogram2dot.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o dendrogram2dot
+	
+dendrogram2dendrogram: $(LIB_OBJ) $(VENDOR_OBJ) demo/dendrogram2dendrogram.cpp
+	$(CC) $(CFLAGS) demo/dendrogram2dendrogram.cpp $(LIB_OBJ) $(VENDOR_OBJ) -o dendrogram2dendrogram
 
 .PHONY: clean all debug demo doc 
 

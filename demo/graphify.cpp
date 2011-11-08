@@ -97,9 +97,5 @@ void eachDocument(Word target, Document document, bool isNewTarget)
     
     documentIndex++;
     
-    if (documentIndex % saveEvery == 0) {
-    	save();
-    }
-    
     progressbar_inc(corpusProgress);
 }
